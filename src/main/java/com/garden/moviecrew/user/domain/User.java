@@ -33,12 +33,17 @@ public class User {
 	private String loginId;
 	
 	private String password;
+	
 	private String name;
 	
 	@Column(name="nickName")
 	private String nickName;
+	
 	private String birthday;
+	
 	private String email;
+	
+	private String gender;
 	
 	@Column(name="createdAt")
 	@CreationTimestamp
@@ -47,9 +52,6 @@ public class User {
 	@Column(name="updatedAt")
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
-	
-	
-	
 	
 	
 }
