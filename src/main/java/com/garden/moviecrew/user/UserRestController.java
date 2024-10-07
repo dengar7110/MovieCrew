@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.garden.moviecrew.user.domain.User;
 import com.garden.moviecrew.user.service.UserService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/user")
 public class UserRestController {
@@ -41,6 +43,29 @@ public class UserRestController {
 			resultMap.put("result", "fail");
 		}
 		
+		return resultMap;
+		
+	}
+	
+	@PostMapping("/login")
+	public Map<String, String> login(
+			@RequestParam("loginId") String loginId
+			, @RequestParam("password") String password
+			, HttpSession session) {
+		
+		User user = userService.getUser(loginId, password);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(user != null) {
+			resultMap.put("result", "success");
+			session.setAttribute("userId", user.getId());
+			session.setAttribute("session", user.getName());
+			session.setAttribute("session", user.getNickName());
+		} else {
+			resultMap.put("result", "fail");
+		}
+
 		return resultMap;
 		
 	}

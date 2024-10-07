@@ -1,5 +1,7 @@
 package com.garden.moviecrew.user.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.garden.moviecrew.user.domain.User;
@@ -38,6 +40,17 @@ public class UserService {
 		return result;
 		
 	}
+	
+	public User getUser(
+			String loginId
+			, String password) {
+		
+		Optional<User> optionalUser =  userRepository.findByLoginIdAndPassword(loginId, password);
+		User user = optionalUser.orElse(null);
+		
+		return user;
+	}
+	
 	
 	
 }
