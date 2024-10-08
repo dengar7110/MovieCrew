@@ -52,5 +52,36 @@ public class UserService {
 	}
 	
 	
+	public User updateUser(
+			int userId
+			,String loginId
+			, String password
+			, String name
+			, String nickName
+			, String birthday
+			, String email
+			, String gender) {
+		
+		Optional<User> optionalUser = userRepository.findByLoginId(loginId);
+		
+		User user = optionalUser.orElse(null);
+		
+		user = User.builder()
+				.loginId(user.getLoginId())
+				.password(password)
+				.name(name)
+				.nickName(nickName)
+				.birthday(birthday)
+				.email(email)
+				.gender(gender)
+				.build();
+		
+		
+		user = userRepository.save(user);
+		
+		return user; 
+		
+	}
+	
 	
 }

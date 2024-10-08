@@ -19,5 +19,10 @@ public class UserController {
 		
 		return "user/login-view";
 	}
+	
+	@GetMapping("/edit-view")
+	public String editView() {
+		return "user/edit-view";
+	}
 
 }
