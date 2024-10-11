@@ -4,16 +4,22 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.garden.moviecrew.common.hash.HashingEncoder;
 import com.garden.moviecrew.user.domain.User;
 import com.garden.moviecrew.user.repository.UserRepository;
+
+import jakarta.inject.Qualifier;
 
 @Service
 public class UserService {
 	
 	private UserRepository userRepository;
+	private HashingEncoder encoder;
 	
-	public UserService(UserRepository userRepository) {
+	
+	public UserService(UserRepository userRepository, @org.springframework.beans.factory.annotation.Qualifier("saltHashing") HashingEncoder encoder) {
 		this.userRepository = userRepository;
+		this.encoder = encoder;
 	}
 
 	public User addUser(
@@ -25,9 +31,12 @@ public class UserService {
 			, String email
 			, String gender) {
 
+		
+		String encryptPassword = encoder.encode(password);
+		
 		User user = User.builder()
 					.loginId(loginId)
-					.password(password)
+					.password(encryptPassword)
 					.name(name)
 					.nickName(nickName)
 					.birthday(birthday)
