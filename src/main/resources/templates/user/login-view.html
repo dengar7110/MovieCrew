@@ -45,10 +45,10 @@
 		
 		$("#loginBtn").on("click", function() {
 			
-			let id = $("#loginIdInput").val();
+			let loginId = $("#loginIdInput").val();
 			let password = $("#passwordInput").val();
 			
-			if(id == "") {
+			if(loginId == "") {
 				alert("아이디를 입력해주세요");
 				return;
 			}
@@ -60,7 +60,7 @@
 			$.ajax({
 				type:"post"
 				, url:"/user/login"
-				, data:{"loginId":id, "password":password}
+				, data:{"loginId":loginId, "password":password}
 				, success:function(data) {
 					if(data.result == "success") {
 						location.href = "/crew/crew-view";

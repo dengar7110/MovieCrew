@@ -3,6 +3,7 @@ package com.garden.moviecrew.user;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +50,18 @@ public class UserRestController {
 		
 	}
 	
+	@GetMapping("/duplicateIdCheck")
+	public Map<String, Boolean> isduplicateId(@RequestParam("loginId") String loginId) {
+		
+		boolean idDuplicateId = userService.isDuplicateId(loginId);
+		
+		Map<String, Boolean> resultMap = new HashMap<>();
+		
+		resultMap.put("isDuplicateId", idDuplicateId);
+		
+		return resultMap;
+	}
+	
 	// 로그인 API
 	@PostMapping("/login")
 	public Map<String, String> login(
@@ -63,8 +76,8 @@ public class UserRestController {
 		if(user != null) {
 			resultMap.put("result", "success");
 			session.setAttribute("userId", user.getId());
-			session.setAttribute("session", user.getName());
-			session.setAttribute("session", user.getNickName());
+			session.setAttribute("userName", user.getName());
+			session.setAttribute("userNickName", user.getNickName());
 		} else {
 			resultMap.put("result", "fail");
 		}

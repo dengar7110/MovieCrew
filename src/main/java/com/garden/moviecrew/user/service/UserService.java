@@ -50,14 +50,29 @@ public class UserService {
 		
 	}
 	
-	public User getUser(
-			String loginId
-			, String password) {
+	public boolean isDuplicateId(String loginId) {
+	
+		int count = userRepository.countByLoginId(loginId);
 		
-		Optional<User> optionalUser =  userRepository.findByLoginIdAndPassword(loginId, password);
-		User user = optionalUser.orElse(null);
-		
-		return user;
+		if(count > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public User getUser(String loginId, String password) {
+	    Optional<User> optionalUser = userRepository.findByLoginId(loginId);
+	    
+	    if (optionalUser.isPresent()) {
+	        User user = optionalUser.get();
+	        // encoder의 matches 메소드를 사용하여 입력된 비밀번호와 저장된 비밀번호 비교
+	        if (encoder.matches(password, user.getPassword())) {
+	            return user;
+	        }
+	    }
+	    
+	    return null;
 	}
 	
 	

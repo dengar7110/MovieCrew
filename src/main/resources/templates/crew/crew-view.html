@@ -1,10 +1,51 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-	crew-view
-</body>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}">
+
+<section layout:fragment="contents">
+    <div class="container mt-5">
+        <!-- 모임 개설 버튼 -->
+        <div class="d-flex justify-content-end mb-4">
+            <button type="button" class="btn btn-primary btn-lg">모임 개설하기</button>
+        </div>
+
+        <!-- 개설된 모임들 -->
+        <div class="row">
+            <!-- 반복적으로 표시할 카드 예시 -->
+            <div class="col-4 mb-4">
+                <div class="card shadow">
+                    <img class="card-img-top" src="https://via.placeholder.com/350x150" alt="모임 이미지">
+                    <div class="card-body">
+                        <h5 class="card-title">모임 제목</h5>
+                        <p class="card-text">모임 설명을 여기에 적어주세요. 모임에 대한 간략한 정보를 제공합니다.</p>
+                        <div class="d-flex justify-content-between">
+                            <a href="#" class="btn btn-outline-primary btn-sm">자세히 보기</a>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">모임 개설 날짜 : 2024-10-20</div>
+                </div>
+            </div>
+
+            <!-- 또 다른 모임 카드 -->
+            <div class="col-4 mb-4">
+                <div class="card shadow">
+                    <img class="card-img-top" src="https://via.placeholder.com/350x150" alt="모임 이미지">
+                    <div class="card-body">
+                        <h5 class="card-title">모임 제목</h5>
+                        <p class="card-text">여기에는 모임의 짧은 설명이 들어갑니다.</p>
+                        <div class="d-flex justify-content-between">
+                            <a href="#" class="btn btn-outline-primary btn-sm">자세히 보기</a>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">모임 날짜 : 2024-11-05</div>
+                </div>
+            </div>
+
+            <!-- 더 많은 카드들 반복 -->
+        </div>
+    </div>
+</section>
+
+
 </html>
