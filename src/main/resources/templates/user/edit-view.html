@@ -11,37 +11,37 @@
             <!-- 사용자 아이디 (수정 불가) -->
             <div class="form-group">
                 <label for="loginId">아이디</label>
-                <input type="text" id="loginId" class="form-control" value="user123" readonly>
+                <input th:value="${user.loginId}" type="text" id="loginId" class="form-control" readonly>
             </div>
 
             <!-- 비밀번호 변경 -->
             <div class="form-group">
                 <label for="password">비밀번호 변경</label>
-                <input type="password" id="password" placeholder="새 비밀번호를 입력해주세요" class="form-control">
+                <input type="password" id="passwordInput" placeholder="새 비밀번호를 입력해주세요" class="form-control">
             </div>
 
             <!-- 이름 수정 -->
             <div class="form-group">
                 <label for="name">이름</label>
-                <input type="text" id="name" class="form-control" value="홍정원">
+                <input th:value="${user.name}" type="text" id="nameInput" class="form-control">
             </div>
 
             <!-- 닉네임 수정 -->
             <div class="form-group">
-                <label for="nickname">닉네임</label>
-                <input type="text" id="nickName" class="form-control" value="가든">
+                <label for="nickName">닉네임</label>
+                <input th:value="${user.nickName}" type="text" id="nickNameInput" name="nickName" class="form-control">
             </div>
 
-            <!-- 생년월일 수정 -->
-            <div class="form-group">
-                <label for="birthday">생년월일</label>
-                <input type="date" id="birthday" class="form-control" value="1995-01-17">
-            </div>
+			<!-- 생년월일 수정 -->
+			<div class="form-group">
+			    <label for="birthday">생년월일</label>
+			    <input th:value="${formattedBirthday}" type="date" id="birthdayInput" name="birthday" class="form-control">
+			</div>
 
             <!-- 이메일 수정 -->
             <div class="form-group">
                 <label for="email">이메일</label>
-                <input type="email" id="email" class="form-control" value="example@example.com">
+                <input th:value="${user.email}" type="email" id="emailInput" class="form-control">
             </div>
 
             <!-- 성별 수정 -->
@@ -49,11 +49,11 @@
                 <label>성별</label>
                 <div class="d-flex">
                     <div class="form-check form-check-inline mr-3">
-                        <input class="form-check-input" type="radio" id="male" name="gender" value="male" checked>
+                        <input class="form-check-input" type="radio" name="gender" value="male" th:checked="${user.gender == 'male'}">
                         <label class="form-check-label" for="male">남성</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" id="female" name="gender" value="female">
+                        <input class="form-check-input" type="radio" name="gender" value="female" th:checked="${user.gender == 'female'}">
                         <label class="form-check-label" for="female">여성</label>
                     </div>
                 </div>
@@ -62,10 +62,46 @@
             <!-- 저장 버튼 -->
             <button type="button" class="btn btn-success btn-block mt-4" id="saveBtn">저장하기</button>
 
-            <!-- 취소 버튼 -->
-            <button type="button" class="btn btn-secondary btn-block mt-2" id="cancelBtn">취소</button>
+            <!-- 초기화 버튼 -->
+            <button type="button" class="btn btn-secondary btn-block mt-2" id="cancelBtn">초기화</button>
         </div>
     </div>
 </section>
+	
+<script layout:fragment="script">
+
+	$(document).ready(function() {
+		
+		$("#saveBtn").on("click", function() {
+			
+			let password = $("#passwordInput").val();
+			let name = $("#nameInput").val();
+			let nickName = $("#nickNameInput").val();
+			let birthday = $("#birthdayInput").val();
+			let email = $("#emailInput").val();
+			let gender = $("input[name='gender']:checked").val();
+			
+			$.ajax({
+				type: "put"
+				, url: "/user/edit"
+				, data: {"password":password, "name":name, "nickName":nickName, "birthday":birthday, "email":email, "gender":gender}
+				, success:function(data){
+					if(data.result == "success") {
+						location.href = "/user/edit-view";
+					} else {
+						alert("개인정보 수정 실패!");
+					}
+				}
+				, error:function() {
+					alert("개인정보 수정 에러!");
+				}
+			});
+			
+		});
+		
+		
+	});
+
+</script>
 	
 </html>

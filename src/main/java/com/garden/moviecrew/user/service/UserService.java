@@ -1,14 +1,14 @@
 package com.garden.moviecrew.user.service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.garden.moviecrew.common.hash.HashingEncoder;
 import com.garden.moviecrew.user.domain.User;
 import com.garden.moviecrew.user.repository.UserRepository;
-
-import jakarta.inject.Qualifier;
 
 @Service
 public class UserService {
@@ -17,7 +17,7 @@ public class UserService {
 	private HashingEncoder encoder;
 	
 	
-	public UserService(UserRepository userRepository, @org.springframework.beans.factory.annotation.Qualifier("saltHashing") HashingEncoder encoder) {
+	public UserService(UserRepository userRepository, @Qualifier("saltHashing") HashingEncoder encoder) {
 		this.userRepository = userRepository;
 		this.encoder = encoder;
 	}
@@ -27,7 +27,7 @@ public class UserService {
 			, String password
 			, String name
 			, String nickName
-			, String birthday
+			, LocalDate birthday
 			, String email
 			, String gender) {
 
@@ -61,50 +61,72 @@ public class UserService {
 		}
 	}
 	
-	public User getUser(String loginId, String password) {
+	public User login(String loginId, String password) {
 	    Optional<User> optionalUser = userRepository.findByLoginId(loginId);
 	    
-	    if (optionalUser.isPresent()) {
-	        User user = optionalUser.get();
-	        // encoder의 matches 메소드를 사용하여 입력된 비밀번호와 저장된 비밀번호 비교
-	        if (encoder.matches(password, user.getPassword())) {
-	            return user;
-	        }
-	    }
+	    User user = optionalUser.orElse(null);
 	    
+	    user = optionalUser.get();
+	    
+	    if(encoder.matches(password, user.getPassword())) {
+	    	return user;
+	    }
 	    return null;
+	    
 	}
 	
-	
-	public User updateUser(
-			int userId
-			,String loginId
-			, String password
-			, String name
-			, String nickName
-			, String birthday
-			, String email
-			, String gender) {
+	public User getUser(int userId) {
 		
-		Optional<User> optionalUser = userRepository.findByLoginId(loginId);
+		Optional<User> optionalUser = userRepository.findById(userId);
 		
 		User user = optionalUser.orElse(null);
 		
-		user = User.builder()
-				.loginId(user.getLoginId())
-				.password(password)
-				.name(name)
-				.nickName(nickName)
-				.birthday(birthday)
-				.email(email)
-				.gender(gender)
-				.build();
+		return user;
+				
+	}
+	
+	
+	public User editUser(
+			int userId
+			, String password
+			, String name
+			, String nickName
+			, LocalDate birthday
+			, String email
+			, String gender) {
 		
+		Optional<User> optionalUser = userRepository.findById(userId);
+		
+		User user = optionalUser.orElse(null);
+		
+		if(password != null && !password.isEmpty()) {
+			String encryptPassword = encoder.encode(password);
+			user.setPassword(encryptPassword);
+		}
+		
+		if(name != null && !name.isEmpty()) {
+			user.setName(name);
+		}
+		
+		if(nickName != null && !nickName.isEmpty()) {
+			user.setNickName(nickName);
+		}
+		
+		if(birthday != null) {
+			user.setBirthday(birthday);
+		}
+		
+		if(email != null && !email.isEmpty()) {
+			user.setEmail(email);
+		}
+		
+		if(gender != null && !gender.isEmpty()) {
+			user.setGender(gender);
+		}
 		
 		user = userRepository.save(user);
 		
-		return user; 
-		
+		return user;
 	}
 	
 	

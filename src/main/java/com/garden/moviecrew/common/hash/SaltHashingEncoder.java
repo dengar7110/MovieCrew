@@ -59,6 +59,7 @@ public class SaltHashingEncoder implements HashingEncoder {
 	    try {
 	        // 저장된 비밀번호에서 salt와 해시된 비밀번호를 분리
 	        String[] parts = encodedPassword.split(":");
+	        
 	        if (parts.length != 2) {
 	            return false; // 올바른 형식이 아니면 false 반환
 	        }

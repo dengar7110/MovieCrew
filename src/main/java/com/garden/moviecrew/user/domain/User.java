@@ -1,5 +1,6 @@
 package com.garden.moviecrew.user.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,11 +16,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
 @Getter
 @Table(name="user")
 @Entity
@@ -39,7 +42,7 @@ public class User {
 	@Column(name="nickName")
 	private String nickName;
 	
-	private String birthday;
+	private LocalDate birthday;
 	
 	private String email;
 	

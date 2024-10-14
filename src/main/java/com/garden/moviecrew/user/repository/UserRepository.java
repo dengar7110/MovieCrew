@@ -12,5 +12,9 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 	
 	public Optional<User> findByLoginId(String loginId);
 	
+	public Optional<User> findById(int id);
+	
 	public int countByLoginId(String loginId);
+	
+	
 }
