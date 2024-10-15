@@ -73,7 +73,6 @@ public class UserRestController {
         if (user != null) {
             resultMap.put("result", "success");
             session.setAttribute("userId", user.getId());
-            session.setAttribute("userName", user.getName());
             session.setAttribute("userNickName", user.getNickName());
         } else {
             resultMap.put("result", "fail");
@@ -102,16 +101,13 @@ public class UserRestController {
         }
 
         User user = userService.editUser(userId, password, name, nickName, birthdayDate, email, gender);
-
+        
+        session.setAttribute("userNickName", user.getNickName());
+        
         Map<String, String> resultMap = new HashMap<>();
         resultMap.put("result", user != null ? "success" : "fail");
 
         return resultMap;
     }
 
-    @PostMapping("/logout")
-    public String logout(HttpSession session) {
-        session.removeAttribute("userId");
-        return "redirect:login-view";
-    }
 }

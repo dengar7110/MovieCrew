@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.garden.moviecrew.user.domain.User;
@@ -52,5 +53,13 @@ public class UserController {
 		
 		return "user/edit-view";
 	}
+	
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+    	
+        session.removeAttribute("userId");
+        
+        return "redirect:/user/login-view";
+    }
 
 }
