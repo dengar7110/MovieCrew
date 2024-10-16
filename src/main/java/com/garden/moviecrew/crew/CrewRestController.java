@@ -26,7 +26,7 @@ public class CrewRestController {
 	
 	
 	// crew 생성 API
-	@PostMapping("/create")
+	@PostMapping("/createCrew")
 	public Map<String, String> createCrew(
 			@RequestParam("title") String title 
 			, @RequestParam("description") String description

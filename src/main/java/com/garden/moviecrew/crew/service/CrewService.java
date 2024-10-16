@@ -1,5 +1,7 @@
 package com.garden.moviecrew.crew.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.garden.moviecrew.crew.domain.Crew;
@@ -26,6 +28,14 @@ public class CrewService {
 		Crew result = crewRepository.save(crew);
 		
 		return result;
+	}
+	
+	public List<Crew> getCrewList(int userId) {
+	
+		List<Crew> crewList = crewRepository.findAllByOrderByIdDesc();
+		
+		return crewList;
+		
 	}
 	
 	
