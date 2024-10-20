@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.garden.moviecrew.board.domain.Board;
 import com.garden.moviecrew.board.service.BoardService;
+import com.garden.moviecrew.comment.domain.Comment;
+import com.garden.moviecrew.comment.service.CommentService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -18,9 +20,11 @@ import jakarta.servlet.http.HttpSession;
 public class BoardController {
 
 	private BoardService boardService;
+	private CommentService commentService;
 	
 	public BoardController(BoardService boardServcie) {
 		this.boardService = boardServcie;
+		this.commentService = commentService;
 	}
 	
 	
@@ -38,11 +42,19 @@ public class BoardController {
         return "/board/board-view";  // 게시판 화면으로 이동
     }
 	
-    @GetMapping("")
-    public String boardDetailView() {
-
+    @GetMapping("/{boardId}") // 게시글 상세 보기 경로
+    public String boardDetailView(@PathVariable("boardId") int boardId, Model model) {
+        // 게시글 정보 불러오기
+        Board board = boardService.getBoardById(boardId);
         
-        return "";
+        // 댓글 목록 불러오기
+        List<Comment> commentList = commentService.getCommentsByBoardId(boardId);
+
+        // 모델에 게시글과 댓글 추가
+        model.addAttribute("board", board);
+        model.addAttribute("commentList", commentList);
+        
+        return "/board/board-view-detail"; // 게시글 상세 화면으로 이동
     }
     
 }
