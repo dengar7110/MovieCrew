@@ -23,16 +23,16 @@ public class BoardRestController {
 		this.boardService = boardService;
 	}
 
-	@PostMapping("createBoard")
+	@PostMapping("/createBoard")
 	public Map<String, String> createBoard(
 			@RequestParam("title") String title
-			, @RequestParam("content") String content
+			, @RequestParam("contents") String contents
 			, @RequestParam("crewId") int crewId
 			, HttpSession session) {
 		
 		int userId = (Integer)session.getAttribute("userId");
 		
-		Board board = boardService.addBoard(userId, crewId, title, content);
+		Board board = boardService.addBoard(userId, crewId, title, contents);
 		
 		Map<String, String >resultMap = new HashMap<>();
 		

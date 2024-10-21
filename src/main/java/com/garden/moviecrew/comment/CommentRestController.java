@@ -13,7 +13,7 @@ import com.garden.moviecrew.comment.service.CommentService;
 
 import jakarta.servlet.http.HttpSession;
 
-@RequestMapping("/board/comment")
+@RequestMapping("/comment")
 @RestController
 public class CommentRestController {
 	
@@ -26,23 +26,24 @@ public class CommentRestController {
 	
 	@PostMapping("/create")
 	public Map<String, String> createComment(
-			@RequestParam("boardId") int boardId
-			, @RequestParam("contents") String contents
-			, HttpSession session) {
-		
-		int userId = (Integer)session.getAttribute("userId");
-		
-		Comment comment = commentService.addComment(boardId, userId, contents);
-		
-		Map<String, String> resultMap = new HashMap<>();
-		
-		if(comment != null) {
-			resultMap.put("result", "success");
-		} else {
-			resultMap.put("result", "fail");
-		}
-		
-		return resultMap;
+	        @RequestParam("boardId") int boardId,
+	        @RequestParam("contents") String contents,
+	        HttpSession session) {
+
+	    int userId = (Integer) session.getAttribute("userId");
+	    
+	    Comment comment = commentService.addComment(boardId, userId, contents);
+	    
+	    Map<String, String> resultMap = new HashMap<>();
+	    
+	    if (comment != null) {
+	        resultMap.put("result", "success");
+	    } else {
+	        resultMap.put("result", "fail");
+	    }
+	    
+	    return resultMap;
 	}
+
 
 }

@@ -37,7 +37,7 @@ public class Board {
 	private int userId;
 	
 	private String title;
-	private String content;
+	private String contents;
 	
 	@Column(name="createdAt")
 	@CreationTimestamp

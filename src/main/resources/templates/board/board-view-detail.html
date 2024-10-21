@@ -4,115 +4,87 @@
       layout:decorate="~{layouts/default}">
 
 <section layout:fragment="contents">
-
-    <div class="container mt-5">
-        <!-- 게시글 상세 -->
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <!-- 게시글 제목 -->
-                <h2 class="mb-3" th:text="${board.title}">게시글 제목</h2>
-
-                <!-- 작성자 및 작성일 -->
-                <p class="text-muted">
-                    <small>작성자: <span>작성자명</span></small>
-                    <span class="mx-2">|</span>
-                    <small>작성일: <span th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
-                </p>
-
-                <!-- 게시글 내용 -->
-                <div class="card mb-5">
-                    <div class="card-body" th:text="${board.content}">
-                        게시글 내용이 여기에 표시됩니다. 더미 데이터로 넣어본 예시입니다. 
-                        여기에 실제 게시글 내용을 동적으로 불러오게 됩니다.
+        <div class="container mt-5">
+            <!-- 게시글 상세 -->
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <!-- 게시글 제목 -->
+                    <h2 class="mb-3" th:text="${postView.title}">게시글 제목</h2>
+                    <!-- 작성자 및 작성일 -->
+                    <p class="text-muted">
+                        <small>작성자: <span th:text="${postView.userName}">작성자명</span></small>
+                        <span class="mx-2">|</span>
+                        <small>작성일: <span th:text="${#temporals.format(postView.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
+                    </p>
+                    <!-- 게시글 내용 -->
+                    <div id="board" data-board-id="[[${postView.id}]]" class="card mb-5">
+                        <div class="card-body" th:text="${postView.contents}"></div>
                     </div>
-                </div>
-
-                <!-- 댓글 섹션 -->
-                <div class="mt-5">
-                    <h5>댓글</h5>
-
-                    <!-- 댓글 작성 -->
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <textarea id="commentInput" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
+                    <!-- 댓글 섹션 -->
+                    <div class="mt-5">
+                        <h5>댓글</h5>
+                        <!-- 댓글 작성 -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <textarea id="commentInput" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
+                                </div>
+                                <button type="button" class="btn btn-primary" id="commentSubmitBtn">댓글 작성</button>
                             </div>
-                            <button type="button" class="btn btn-primary" id="commentSubmitBtn">댓글 작성</button>
                         </div>
-                    </div>
-
-                    <!-- 기존 댓글 목록 -->
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <p>더미 댓글 내용입니다.</p>
-                            <p class="text-muted mb-0">
-                                <small>작성자: <span>작성자명</span></small>
-                                <span class="mx-2">|</span>
-                                <small>작성일: <span>2024-10-10</span></small>
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- 더미 데이터로 추가 댓글 -->
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <p>이것은 더미 댓글입니다. 여기에 댓글 내용이 표시됩니다.</p>
-                            <p class="text-muted mb-0">
-                                <small>작성자: 사용자1</small>
-                                <span class="mx-2">|</span>
-                                <small>작성일: 2024-10-10</small>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <p>이것은 또 다른 더미 댓글입니다.</p>
-                            <p class="text-muted mb-0">
-                                <small>작성자: 사용자2</small>
-                                <span class="mx-2">|</span>
-                                <small>작성일: 2024-10-11</small>
-                            </p>
+                        <!-- 기존 댓글 목록 -->
+                        <div th:each="comment : ${commentList}" class="card mb-3">
+                            <div class="card-body">
+                                <p th:text="${comment.contents}">더미 댓글 내용입니다.</p>
+                                <p class="text-muted mb-0">
+                                    <small>작성자: <span th:text="${comment.userName}">작성자명</span></small>
+                                    <span class="mx-2">|</span>
+                                    <small>작성일: <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<script>
-    $(document).ready(function() {
-        // 댓글 작성 버튼 클릭 시
-        $("#commentSubmitBtn").on("click", function() {
-        	
-            let commentContent = $("#commentInput").val();
-
-            if (!commentContent) {
-                alert("댓글 내용을 입력하세요.");
-                return;
-            }
-
-            $.ajax({
-                type: "post"
-                , url: "/comment/create", // 서버의 댓글 생성 URL에 맞게 수정
-                data: {
-                    "boardId": boardId,
-                    "content": commentContent
-                }
-            	, success:function(data) {
-                    if (data.result == "success") {
-                        location.reload(); // 댓글 작성 후 페이지 새로고침
-                    } else {
-                        alert("댓글 작성 실패!");
-                    }
-                }
-            	, error:function() {
-                    alert("댓글 작성 중 오류가 발생했습니다.");
-                }
-            });
-        });
-    });
+<script layout:fragment="script">
+	$(document).ready(function() {
+	    // 댓글 작성 버튼 클릭 시
+	    $("#commentSubmitBtn").on("click", function() {
+	        let contents = $("#commentInput").val();
+	        let boardId = $("#board").data("board-id");
+	
+	        // boardId가 NaN인지 확인
+	        if (isNaN(boardId)) {
+	            alert("잘못된 게시글 ID입니다.");
+	            return;
+	        }
+	
+	        if (contents == null || contents.trim() === "") {
+	            alert("댓글 내용을 입력하세요.");
+	            return;
+	        }
+	
+	        $.ajax({
+	            type: "post",
+	            url: "/comment/create",  // 댓글 작성 API 호출
+	            data: { "boardId": boardId, "contents": contents },
+	            success: function(data) {
+	                if (data.result === "success") {
+	                    location.reload(); // 댓글 작성 후 페이지 새로고침
+	                } else {
+	                    alert("댓글 작성 실패!");
+	                }
+	            },
+	            error: function() {
+	                alert("댓글 작성 에러!");
+	            }
+	        });
+	    });
+	});
 </script>
+
 
 </html>
