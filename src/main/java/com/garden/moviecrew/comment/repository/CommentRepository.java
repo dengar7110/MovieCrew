@@ -8,6 +8,6 @@ import com.garden.moviecrew.comment.domain.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer>{
 	
-    public List<Comment> findByBoardId(int boardId);
+    public List<Comment> findByPostId(int boardId);
 	
 }

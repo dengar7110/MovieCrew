@@ -1,6 +1,9 @@
-package com.garden.moviecrew.board.dto;
+package com.garden.moviecrew.post.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.garden.moviecrew.comment.dto.CommentView;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,12 +11,13 @@ import lombok.Getter;
 @Builder
 @Getter
 public class PostView {
-    private int id;
-    private int crewId;
+    private int postId;
     private int userId;
     private String title;
     private String contents;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String userName; // 사용자 이름 필드 추가
+    private String nickName;
+    private String commentor;
+    private List<CommentView> commentList;
 }

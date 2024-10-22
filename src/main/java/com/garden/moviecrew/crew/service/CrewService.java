@@ -32,10 +32,13 @@ public class CrewService {
 	
 	public List<Crew> getCrewList(int userId) {
 	
-		List<Crew> crewList = crewRepository.findAllByOrderByIdDesc();
+		 return crewRepository.findByUserIdOrderByIdDesc(userId);
+		 
+	}
+	
+	public Crew getCrewByIdAndUserId(int id, int userId) {
 		
-		return crewList;
-		
+		return crewRepository.findByIdAndUserId(id, userId);
 	}
 	
 	

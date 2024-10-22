@@ -30,8 +30,8 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@Column(name="boardId")
-	private int boardId;
+	@Column(name="postId")
+	private int postId;
 	
 	@Column(name="userId")
 	private int userId;

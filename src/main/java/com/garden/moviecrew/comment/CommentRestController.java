@@ -26,13 +26,13 @@ public class CommentRestController {
 	
 	@PostMapping("/create")
 	public Map<String, String> createComment(
-	        @RequestParam("boardId") int boardId,
+	        @RequestParam("postId") int postId,
 	        @RequestParam("contents") String contents,
 	        HttpSession session) {
 
 	    int userId = (Integer) session.getAttribute("userId");
 	    
-	    Comment comment = commentService.addComment(boardId, userId, contents);
+	    Comment comment = commentService.addComment(postId, userId, contents);
 	    
 	    Map<String, String> resultMap = new HashMap<>();
 	    

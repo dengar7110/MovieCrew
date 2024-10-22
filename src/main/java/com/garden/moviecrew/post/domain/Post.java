@@ -1,4 +1,4 @@
-package com.garden.moviecrew.board.domain;
+package com.garden.moviecrew.post.domain;
 
 import java.time.LocalDateTime;
 
@@ -22,9 +22,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-@Table(name="board")
+@Table(name="post")
 @Entity
-public class Board {
+public class Post {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

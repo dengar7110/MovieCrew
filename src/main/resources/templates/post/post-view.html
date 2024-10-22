@@ -8,8 +8,8 @@
         <!-- 게시판 제목 및 설명 -->
         <div class="row mb-4">
             <div class="col text-center">
-                <h2>크루 게시판</h2>
-                <p>크루에 대한 설명을 여기에 적어주세요.</p>
+                <h2 th:text="| 크루 이름 : ${crew.title}|">크루 게시판</h2>
+                <p th:text="| 크루 설명 : ${crew.description}|">크루에 대한 설명을 여기에 적어주세요.</p>
             </div>
         </div>
 
@@ -25,13 +25,13 @@
             <div class="col">
                 <div class="list-group">
                     <!-- 게시글 리스트 -->
-                    <a th:each="board:${boardList}" th:href="@{/board/view/{boardId}(boardId=${board.id})}" 
+                    <a th:each="post:${postList}" th:href="@{/post/postDetail/{postId}(postId=${post.id})}" 
                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <div>
-                            <h5 th:text="${board.title}">게시글 제목</h5>
-                            <small th:text="${board.userId}">작성자</small>
+                            <h5 th:text="${post.title}">게시글 제목</h5>
+                            <small th:text="${post.userId}">작성자</small>
                         </div>
-                        <span th:text="|작성일: ${#temporals.format(board.createdAt, 'yyyy-MM-dd')}|">작성일</span>
+                        <span th:text="|작성일: ${#temporals.format(post.createdAt, 'yyyy-MM-dd')}|">작성일</span>
                     </a>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                     <input type="hidden" id="crewId" th:value="${crewId}">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="saveBoardBtn">작성하기</button>
+                    <button type="button" class="btn btn-success" id="savePostBtn">작성하기</button> <!-- 버튼 ID 수정 -->
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
                 </div>
             </div>
@@ -73,7 +73,7 @@
 <script layout:fragment="script">
     $(document).ready(function() {
         // 게시글 작성 버튼 클릭 시 게시글 작성
-        $("#saveBoardBtn").on("click", function() {
+        $("#savePostBtn").on("click", function() { // ID 수정
         	
             let title = $("#postTitle").val();
             let contents = $("#postContents").val();
@@ -85,17 +85,17 @@
             }
             
             $.ajax({
-                type: "post"
-                , url: "/board/createBoard"
-                , data: {"title": title, "contents": contents, "crewId": crewId}
-            	, success: function(data) {
+                type: "post",
+                url: "/post/createPost", // URL 수정
+                data: {"title": title, "contents": contents, "crewId": crewId},
+                success: function(data) {
                     if (data.result == "success") {
                         location.reload(); // 게시글 생성 후 페이지 새로고침
                     } else {
                         alert("게시글 작성 실패!");
                     }
-                }
-            	, error: function() {
+                },
+                error: function() {
                     alert("게시글 작성 에러!");
                 }
             });
