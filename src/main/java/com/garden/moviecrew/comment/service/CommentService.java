@@ -40,21 +40,20 @@ public class CommentService {
     	
     	List<Comment> commentList = commentRepository.findByPostId(postId);
     	
-    	
     	List<CommentView> commentViewList = new ArrayList<>();
-    	
     	
     	for(Comment comment:commentList) {
     		
     		int userId = comment.getUserId();
-    		User user = userService.getUser(userId);
+    		User user = userService.getUserById(userId);
     		
     		CommentView commentView = CommentView.builder()
     				.commentId(comment.getId())
-    				.userId(userId)
+    				.userId(user.getId())
     				.nickName(user.getNickName())
     				.contents(comment.getContents())
-    				.loginId(user.getLoginId())
+    				.createdAt(comment.getCreatedAt())
+    				.updatedAt(comment.getUpdatedAt() )
     				.build();
     		
     		commentViewList.add(commentView);

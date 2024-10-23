@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.garden.moviecrew.comment.domain.Comment;
+import com.garden.moviecrew.comment.dto.CommentView;
 import com.garden.moviecrew.comment.service.CommentService;
 import com.garden.moviecrew.crew.domain.Crew;
 import com.garden.moviecrew.crew.service.CrewService;
@@ -42,13 +43,14 @@ public class PostController {
     	int userId = (Integer) session.getAttribute("userId"); // 세션에서 사용자 ID 가져오기
 
         // 해당 크루에 속한 게시글 리스트 불러오기
-        List<Post> postList = postService.getPostListByCrewIdAndUserId(crewId, userId);
-        Crew crew = crewService.getCrewByIdAndUserId(crewId, userId);
+        List<PostView> postViewList = postService.getPostViewListByCrewId(crewId);
+        Crew crew = crewService.getCrewById(crewId);
         
-        model.addAttribute("postList", postList);
+        model.addAttribute("postViewList", postViewList);
         model.addAttribute("crew", crew);
+        model.addAttribute("crewId", crewId);
 
-        return "post/post-view"; // 게시판 화면으로 이동
+        return "post/postListView"; // 게시판 화면으로 이동
     }
 
     // 게시글 상세보기 조회
@@ -60,13 +62,15 @@ public class PostController {
         
     	int userId = (Integer)session.getAttribute("userId");
     	// 게시글 정보 불러오기
-        PostView postView = postService.getPostView(postId, userId);
+        PostView postView = postService.getPostView(postId);
 
         // 댓글 목록 불러오기
+        List<CommentView> commentViewList = commentService.getCommentListByPostId(postId);
 
         // 모델에 게시글과 댓글 추가
         model.addAttribute("postView", postView);
+        model.addAttribute("commentViewList", commentViewList);
 
-        return "post/post-view-detail"; // 게시글 상세 화면으로 이동
+        return "post/postViewDetail"; // 게시글 상세 화면으로 이동
     }
 }

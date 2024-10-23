@@ -1,5 +1,7 @@
 package com.garden.moviecrew.comment.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,5 +13,8 @@ public class CommentView {
 	private int userId;
     private String nickName;
     private String contents;
-    private String loginId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    
 }
+

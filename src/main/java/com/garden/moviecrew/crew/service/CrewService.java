@@ -30,15 +30,14 @@ public class CrewService {
 		return result;
 	}
 	
-	public List<Crew> getCrewList(int userId) {
+    public List<Crew> getAllCrews() {
+    	
+        return crewRepository.findAll(); // 모든 크루를 가져옴
+    }
 	
-		 return crewRepository.findByUserIdOrderByIdDesc(userId);
-		 
-	}
-	
-	public Crew getCrewByIdAndUserId(int id, int userId) {
+	public Crew getCrewById(int id) {
 		
-		return crewRepository.findByIdAndUserId(id, userId);
+		return crewRepository.findById(id).orElse(null);
 	}
 	
 	

@@ -1,5 +1,6 @@
 package com.garden.moviecrew.post.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,27 +12,51 @@ import com.garden.moviecrew.post.domain.Post;
 import com.garden.moviecrew.post.dto.PostView;
 import com.garden.moviecrew.post.repository.PostRepository;
 import com.garden.moviecrew.user.domain.User;
-import com.garden.moviecrew.user.repository.UserRepository;
+import com.garden.moviecrew.user.service.UserService;
 
 @Service
 public class PostService {
 
     private PostRepository postRepository;
-    private UserRepository userRepository;
+    private UserService userService;
     private CommentService commentService;
 
     public PostService(
     		PostRepository postRepository
-    		, UserRepository userRepository
+    		, UserService userService
     		, CommentService commentService) {
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.commentService = commentService;
     }
 
     // 특정 소모임에 해당하는 사용자 게시글 리스트 가져오기
-    public List<Post> getPostListByCrewIdAndUserId(int crewId, int userId) {
-        return postRepository.findByCrewIdAndUserId(crewId, userId);
+    public List<PostView> getPostViewListByCrewId(int crewId) {
+       
+    	List<Post> postList = postRepository.findByCrewId(crewId);
+    	
+    	List<PostView> postViewList = new ArrayList<>();
+    	
+    	for(Post post:postList) {
+    		
+    		User user = userService.getUserById(post.getUserId());
+    		
+    		PostView postView = PostView.builder()
+					    				.postId(post.getId())
+					    				.userId(post.getUserId())
+					    				.title(post.getTitle())
+					    				.contents(post.getContents())
+					    				.createdAt(post.getCreatedAt())
+					    				.updatedAt(post.getUpdatedAt())
+					    				.nickName(user.getNickName())
+					    				.build();
+    				
+    		postViewList.add(postView);
+    		
+    	}
+    			
+    	
+    	return postViewList;
     }
 
     // 게시글 추가
@@ -47,12 +72,12 @@ public class PostService {
     }
 
     // 게시글 ID로 게시글 조회
-    public PostView getPostView(int postId, int userId) {
+    public PostView getPostView(int postId) {
+    	
         Optional<Post> optionalPost = postRepository.findById(postId);
         Post post = optionalPost.orElse(null);
 
-        Optional<User> optionalUser = userRepository.findById(userId);
-        User user = optionalUser.orElse(null);
+       	User user = userService.getUserById(post.getUserId());
 
         // 댓글 목록 가져오기
         List<CommentView> commentViewList = commentService.getCommentListByPostId(postId);

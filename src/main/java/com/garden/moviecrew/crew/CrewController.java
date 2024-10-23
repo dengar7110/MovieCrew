@@ -27,11 +27,11 @@ public class CrewController {
 		
 		int userId = (Integer)session.getAttribute("userId");
 		
-		List<Crew> crewList = crewService.getCrewList(userId);
+		List<Crew> crewList = crewService.getAllCrews();
 		
 		model.addAttribute("crewList", crewList);
 		
-		return "/crew/crew-view";
+		return "/crew/crewView";
 	}
 	
 }

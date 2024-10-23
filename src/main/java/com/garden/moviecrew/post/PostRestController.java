@@ -14,17 +14,17 @@ import com.garden.moviecrew.post.service.PostService; // BoardService에서 Post
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/post") // /board를 /post로 변경
+@RequestMapping("/post")
 public class PostRestController {
 
-    private PostService postService; // BoardService에서 PostService로 변경
+    private PostService postService;
 
     public PostRestController(PostService postService) {
-        this.postService = postService; // BoardService에서 PostService로 변경
+        this.postService = postService;
     }
 
-    @PostMapping("/createPost") // createBoard를 createPost로 변경
-    public Map<String, String> createPost( // createBoard를 createPost로 변경
+    @PostMapping("/createPost") 
+    public Map<String, String> createPost(
             @RequestParam("title") String title,
             @RequestParam("contents") String contents,
             @RequestParam("crewId") int crewId,
@@ -32,7 +32,7 @@ public class PostRestController {
         
         int userId = (Integer) session.getAttribute("userId");
 
-        Post post = postService.addPost(userId, crewId, title, contents); // Board를 Post로 변경
+        Post post = postService.addPost(userId, crewId, title, contents);
 
         Map<String, String> resultMap = new HashMap<>();
 

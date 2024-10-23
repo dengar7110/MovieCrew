@@ -42,7 +42,7 @@ public class UserController {
 		
 		Integer userId = (Integer)session.getAttribute("userId");
 		
-		User user = userService.getUser(userId);
+		User user = userService.getUserById(userId);
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String formattedBirthday = user.getBirthday().format(formatter);

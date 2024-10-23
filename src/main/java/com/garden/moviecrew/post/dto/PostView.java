@@ -17,6 +17,7 @@ public class PostView {
     private String contents;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    
     private String nickName;
     private String commentor;
     private List<CommentView> commentList;

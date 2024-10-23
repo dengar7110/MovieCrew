@@ -17,7 +17,7 @@
                     <small>작성일: <span th:text="${#temporals.format(postView.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
                 </p>
                 <!-- 게시글 내용 -->
-                <div id="post" th:data-post-id="${postView.postId}" class="card mb-5"> <!-- id를 post로 변경 -->
+                <div id="post" th:data-post-id="${postView.postId}" class="card mb-5">
                     <div class="card-body" th:text="${postView.contents}"></div>
                 </div>
                 <!-- 댓글 섹션 -->
@@ -33,11 +33,11 @@
                         </div>
                     </div>
                     <!-- 기존 댓글 목록 -->
-                    <div th:each="comment:${commentList}" class="card mb-3">
+                    <div th:each="comment:${commentViewList}" class="card mb-3">
                         <div class="card-body">
                             <p th:text="${comment.contents}">더미 댓글 내용입니다.</p>
                             <p class="text-muted mb-0">
-                                <small>작성자: <span th:text="${comment.nickName}">작성자명</span></small> <!-- 작성자명에 comment.nickName 사용 -->
+                                <small>작성자: <span th:text="${comment.nickName}">작성자명</span></small>
                                 <span class="mx-2">|</span>
                                 <small>작성일: <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
                             </p>

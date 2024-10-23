@@ -75,7 +75,7 @@ public class UserService {
 	    
 	}
 	
-	public User getUser(int userId) {
+	public User getUserById(int userId) {
 		
 		Optional<User> optionalUser = userRepository.findById(userId);
 		
