@@ -1,7 +1,9 @@
 package com.garden.moviecrew.comment.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -62,4 +64,18 @@ public class CommentService {
         return commentViewList;
     }
 	
+    public Comment editComment(String contents, int commentId) {
+    	
+    	Optional<Comment> optionalComment = commentRepository.findById(commentId);
+    	
+    	Comment comment = optionalComment.orElse(null);
+    	
+    	if(contents != null) {
+    		comment.setContents(contents);
+    		comment.setUpdatedAt(LocalDateTime.now());
+    	}
+    	
+    	return commentRepository.save(comment);
+    }
+    
 }

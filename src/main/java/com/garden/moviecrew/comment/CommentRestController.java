@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,5 +46,24 @@ public class CommentRestController {
 	    return resultMap;
 	}
 
+	@PutMapping("/editComment")
+	public Map<String, String> editComment(
+			@RequestParam("contents") String contents
+			, @RequestParam("commentId") int commentId
+			) {
+		
+		Comment comment = commentService.editComment(contents, commentId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(comment != null) {
+			resultMap.put("result", "success");
+		} else {
+			resultMap.put("result", "success");
+		}
+	
+		return resultMap;
+	}
+	
 
 }

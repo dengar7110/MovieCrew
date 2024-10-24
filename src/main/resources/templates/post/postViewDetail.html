@@ -20,6 +20,7 @@
                 <div id="post" th:data-post-id="${postView.postId}" class="card mb-5">
                     <div class="card-body" th:text="${postView.contents}"></div>
                 </div>
+                
                 <!-- 댓글 섹션 -->
                 <div class="mt-5">
                     <h5>댓글</h5>
@@ -33,16 +34,27 @@
                         </div>
                     </div>
                     <!-- 기존 댓글 목록 -->
-                    <div th:each="comment:${commentViewList}" class="card mb-3">
-                        <div class="card-body">
-                            <p th:text="${comment.contents}">더미 댓글 내용입니다.</p>
-                            <p class="text-muted mb-0">
-                                <small>작성자: <span th:text="${comment.nickName}">작성자명</span></small>
-                                <span class="mx-2">|</span>
-                                <small>작성일: <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
-                            </p>
-                        </div>
-                    </div>
+					<div th:each="comment:${commentViewList}" class="card mb-3 shadow-sm">
+					    <div class="card-body">
+					        <!-- 댓글 내용 -->
+					        <p th:id="|commentContents${comment.commentId}|" th:text="${comment.contents}" class="mb-2">더미 댓글 내용입니다.</p>
+						
+							<input type="text" th:id="|commentInput${comment.commentId}|" class="form-control mb-2 d-none" th:value="${comment.contents}">
+						
+					        <!-- 작성자 및 작성일 정보 -->
+					        <div class="d-flex justify-content-between align-items-center text-muted mb-0">
+					            <small>작성자: <span th:text="${comment.nickName}">작성자명</span></small>
+					            <small>작성일: <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
+					        </div>
+					
+					        <!-- 수정 및 삭제 버튼 -->
+					        <div class="d-flex justify-content-end mt-3">
+					            <button th:id="|editBtn${comment.commentId}|" type="button" class="btn btn-outline-primary btn-sm mx-2 editBtn" th:data-comment-id="${comment.commentId}">수정</button>
+					            <button th:id="|saveBtn${comment.commentId}|" type="button" class="btn btn-outline-success btn-sm saveBtn d-none" th:data-comment-id="${comment.commentId}">저장</button>
+					            <button th:id="|commentDeleteBtn${comment.commentId}|" type="button" class="btn btn-outline-danger btn-sm deleteBtn" th:data-comment-id="${comment.commentId}">삭제</button>
+					        </div>
+					    </div>
+					</div>
                 </div>
             </div>
         </div>
@@ -51,6 +63,59 @@
 
 <script layout:fragment="script">
     $(document).ready(function() {
+    	
+        $(".editBtn").on("click", function() {
+            let commentId = $(this).data("comment-id"); // 각 댓글의 ID를 가져옴
+            let commentContents = $("#commentContents" + commentId); // 댓글 텍스트
+            let commentInput = $("#commentInput" + commentId); // 수정 input
+            let saveBtn = $("#saveBtn" + commentId); // 저장 버튼
+            let editBtn = $(this); // 수정 버튼
+
+            // 댓글 내용을 숨기고, input을 보여줌
+            commentContents.addClass("d-none");
+            commentInput.removeClass("d-none");
+
+            // 수정 버튼 숨기고 저장 버튼 표시
+            editBtn.addClass("d-none");
+            saveBtn.removeClass("d-none");
+        });
+        
+        $(".saveBtn").on("click", function() {
+        	let commentId = $(this).data("comment-id");
+        	let commentContents = $("#commentContents" + commentId);
+        	let commentInput = $("#commentInput" + commentId);
+        	let saveBtn = $(this); // 저장 버튼
+            let editBtn = $("#editBtn" + commentId); // 수정 버튼
+        	
+            commentContents.removeClass("d-none");
+        	commentInput.addClass("d-none");
+        	
+        	editBtn.removeClass("d-none");
+        	saveBtn.addClass("d-none");
+        	
+        	let contents = commentInput.val();
+        	
+        	$.ajax({
+        		type: "put"
+        		, url: "/comment/editComment"
+        		, data: {"contents": contents, "commentId":commentId}
+        		, success:function(data) {
+        			if(data.result == "success") {
+        				location.reload();
+        			} else { 
+        				alert("댓글 수정 실패!");
+        			}
+        		}
+        		, error:function() {
+        			alert("댓글 수정 에러!");
+        		}
+        		
+        		
+        	});
+        	
+        });
+        
+    	
         // 댓글 작성 버튼 클릭 시
         $("#commentBtn").on("click", function() {
             let contents = $("#commentInput").val();
@@ -62,21 +127,24 @@
             }
 
             $.ajax({
-                type: "post",
-                url: "/comment/create",  // 댓글 작성 API 호출
-                data: { "postId": postId, "contents": contents }, 
-                success: function(data) {
+                type: "post"
+                , url: "/comment/create"
+                , data: { "postId": postId, "contents": contents }
+            	, success: function(data) {
                     if (data.result == "success") {
                         location.reload(); // 댓글 작성 후 페이지 새로고침
                     } else {
                         alert("댓글 작성 실패!");
                     }
-                },
-                error: function() {
+                }
+            	, error: function() {
                     alert("댓글 작성 에러!");
                 }
             });
+        
         });
+        
+        
     });
 </script>
 
