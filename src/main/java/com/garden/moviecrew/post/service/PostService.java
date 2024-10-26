@@ -1,5 +1,6 @@
 package com.garden.moviecrew.post.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +60,7 @@ public class PostService {
     	return postViewList;
     }
 
-    // 게시글 추가
+    // 게시글 작성하기
     public Post addPost(int userId, int crewId, String title, String contents) {
         Post post = Post.builder()
                 .userId(userId)
@@ -70,6 +71,44 @@ public class PostService {
 
         return postRepository.save(post);
     }
+    
+    
+    // 게시글 수정하기
+    public Post editPost(int postId, int userId, String title, String contents) {
+    	
+    	Optional<Post> optionalPost =  postRepository.findById(postId);
+    	
+    	Post post = optionalPost.orElse(null);
+    	
+    	if(post.getUserId() == userId) {
+    		post.setTitle(title);
+    		post.setContents(contents);
+    		post.setUpdatedAt(LocalDateTime.now());
+    		postRepository.save(post);
+    	} else {
+    		return null;
+    	}
+    	
+    	return post;
+    }
+    
+    // 게시글 삭제하기
+    public boolean deletePost(int postId, int userId) {
+    	
+    	Optional<Post> optionalPost =  postRepository.findByIdAndUserId(postId, userId);
+    	
+    	Post post = optionalPost.orElse(null);
+    	
+    	if(post != null) {
+    		commentService.deletCommentByPostId(postId);
+    		postRepository.delete(post);
+    		return true;
+    	} else {
+    		return false;
+    	}
+    	
+    }
+    
 
     // 게시글 ID로 게시글 조회
     public PostView getPostView(int postId) {
@@ -85,6 +124,7 @@ public class PostService {
         return PostView.builder()
                 .postId(post.getId())
                 .userId(user.getId())
+                .nickName(user.getNickName())
                 .title(post.getTitle())
                 .contents(post.getContents())
                 .commentor(user.getNickName())

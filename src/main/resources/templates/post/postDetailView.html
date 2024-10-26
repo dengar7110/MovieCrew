@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<section layout:fragment="contents">
+    <div class="container mt-5">
+        <!-- 게시글 상세 -->
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+            
+				<!-- 게시글 제목 -->
+				<div class="mb-3" th:text="${postView.title}" id="postTitle">게시글 제목</div>
+				<input type="text" class="d-none form-control" id="postTitleInput" th:value="${postView.title}">
+				
+				<!-- 작성자 및 작성일 -->
+				<p class="text-muted">
+				    <small><span th:text="|작성자: ${postView.nickName}"|>작성자명</span></small>
+				    <span class="mx-2">|</span>
+				    <small>작성일: <span th:text="${#temporals.format(postView.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
+				</p>
+				
+				<!-- 게시글 내용 -->
+				<div id="post" th:data-post-id="${postView.postId}" class="card mb-5">
+				    <div class="card-body" th:text="${postView.contents}" id="postContents">더미 게시글 내용입니다.</div>
+				    <textarea class="d-none form-control" id="postContentsInput" rows="3" th:text="${postView.contents}"></textarea>
+				</div>
+				
+				<!-- 게시글 수정 및 삭제 버튼 -->
+				<div class="mb-4" th:if="${nowLoginUserId == postView.userId}">
+				    <div class="d-flex justify-content-between align-items-center mb-2">
+				        <small class="text-muted">게시글 관리</small>
+				        <div>
+				            <button type="button" class="btn btn-success btn-sm mx-1" th:data-post-id="${postView.postId}" id="editPostBtn">
+				                  <i class="bi bi-pencil">수정</i>
+				            </button>
+				            
+					        <button type="button" class="btn btn-success btn-sm mx-1 d-none" th:data-post-id="${postView.postId}" id="savePostBtn">
+					        	<i class="bi bi-save">저장</i>
+					        </button>
+				            
+				            <button type="button" class="btn btn-danger btn-sm mx-1" th:data-post-id="${postView.postId}" id="deletePostBtn">
+				                <i class="bi bi-trash">삭제</i>
+				            </button>
+				        </div>
+				    </div>
+				    <hr class="mt-2">
+				</div>
+                
+                <!-- 댓글 섹션 -->
+                <div class="mt-5">
+                    <h5>댓글</h5> 	
+                    <!-- 댓글 작성 -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <textarea id="commentInput" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                           		<button type="button" class="btn btn-primary" id="commentBtn" th:data-post-id="${postView.postId}">댓글 작성</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 기존 댓글 목록 -->
+					<div th:each="comment:${commentViewList}" class="card mb-3 shadow-sm">
+					    <div class="card-body">
+					        <!-- 댓글 내용 -->
+					        <p th:id="|commentContents${comment.commentId}|" th:text="${comment.contents}" class="mb-2">더미 댓글 내용입니다.</p>
+						
+							<input type="text" th:id="|commentInput${comment.commentId}|" class="form-control mb-2 d-none" th:value="${comment.contents}">
+						
+					        <!-- 작성자 및 작성일 정보 -->
+					        <div class="d-flex justify-content-between align-items-center text-muted mb-0">
+					            <small>작성자: <span th:text="${comment.nickName}">작성자명</span></small>
+					            <small>작성일: <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
+					        </div>
+					
+					        <!-- 수정 및 삭제 버튼 -->
+					        <div class="d-flex justify-content-end mt-3" th:if="${nowLoginUserId == comment.userId}">
+					            <button th:id="|editCommentBtn${comment.commentId}|" type="button" class="btn btn-outline-success btn-sm mx-2 editCommentBtn" th:data-comment-id="${comment.commentId}">
+					            	<i class="bi bi-pencil">수정</i>
+					            </button>
+					            <button th:id="|saveCommentBtn${comment.commentId}|" type="button" class="btn btn-outline-success btn-sm saveCommentBtn d-none" th:data-comment-id="${comment.commentId}">
+         					    	<i class="bi bi-save">저장</i>
+					            </button>
+					            <button th:id="|commentDeleteBtn${comment.commentId}|" type="button" class="btn btn-outline-danger btn-sm deleteCommentBtn" th:data-comment-id="${comment.commentId}">
+					            	<i class="bi bi-trash">삭제</i>
+					            </button>
+					        </div>
+					    </div>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script layout:fragment="script">
+    $(document).ready(function() {
+    	
+    	// 게시글 삭제 버튼 클릭
+    	$("#deletePostBtn").on("click", function() {
+    		
+    		let postId = $(this).data("post-id");
+    		
+    	    let urlParams = new URLSearchParams(window.location.search);
+    	    let crewId = urlParams.get('crewId');
+
+    		$.ajax({
+    			type: "delete"
+    			, url: "/post/deletePost"
+    			, data:{"postId":postId}
+    			, success:function(data) {
+    				if(data.result == "success") {
+    	                location.href = "/post/postList/" + crewId;
+    				} else{
+    					alert("게시글 삭제 실패!");
+    				}
+    			}
+    			, error:function() {
+    				alert("게시글 수정 에러!");
+    			}
+    		});
+    		
+    	});
+    	
+    	
+    	// 게시글 저장 버튼 클릭
+    	$("#savePostBtn").on("click", function() {
+    		
+    		let postId = $(this).data("post-id");
+    		let title = $("#postTitleInput").val();
+    		let contents = $("#postContentsInput").val();
+
+    		$.ajax({
+    			type: "put"
+    			, url: "/post/editPost"
+    			, data: {"postId":postId, "contents":contents, "title":title}
+    			, success:function(data) {
+    				if(data.result == "success") {
+    	                location.reload();
+    				} else {
+    					alert("게시글 수정 실패!");
+    				}
+    			}
+    			, error:function() {
+    				alert("게시글 수정 에러!")
+    			}
+    		});
+    		
+    		
+    	});
+    	
+    	// 게시글 수정 버튼 클릭
+    	$("#editPostBtn").on("click", function() {
+    		
+    		// 기존 제목, 내용 숨김
+    	    $("#postTitle").addClass("d-none");
+    	    $("#postContents").addClass("d-none");
+    	    
+    	    // 제목, 내용 인풋창 활성화
+    	    $("#postTitleInput").removeClass("d-none");
+    	    $("#postContentsInput").removeClass("d-none");
+
+    	    // 수정 버튼 숨기고 저장 버튼 표시
+    	    $(this).addClass("d-none"); // 수정 버튼 숨김
+    	    $("#savePostBtn").removeClass("d-none"); // 저장 버튼 표시
+    	    
+    	});
+    	
+    	
+    	
+    	// 댓글 삭제 버튼 클릭
+    	$(".deleteCommentBtn").on("click", function() {
+    		
+    		let commentId = $(this).data("comment-id");
+    		
+    		$.ajax({
+    			type: "delete"
+    			, url: "/comment/delete"
+    			, data:{"commentId":commentId}
+    			, success:function(data) {
+    				if(data.result == "success") {
+    					location.reload();
+    				} else {
+    					alert("댓글 삭제 실패!");
+    				}
+    			}
+    			, error:function() {
+    				alert("댓글 삭제 에러!")
+    			}
+    		});
+    		
+    	});
+    	
+    	// 댓글 수정 버튼 클릭
+        $(".editCommentBtn").on("click", function() {
+            let commentId = $(this).data("comment-id"); // 각 댓글의 ID를 가져옴
+            let commentContents = $("#commentContents" + commentId); // 댓글 텍스트
+            let commentInput = $("#commentInput" + commentId); // 수정 input
+            let saveCommentBtn = $("#saveCommentBtn" + commentId); // 저장 버튼
+            let editCommentBtn = $(this); // 수정 버튼
+
+            // 댓글 내용을 숨기고 인풋태그 활성화
+            commentContents.addClass("d-none");
+            commentInput.removeClass("d-none");
+
+            // 수정 버튼 숨기고 저장 버튼 표시
+            editCommentBtn.addClass("d-none");
+            saveCommentBtn.removeClass("d-none");
+        });
+        
+    	// 댓글 저장 버튼 클릭
+        $(".saveCommentBtn").on("click", function() {
+        	let commentId = $(this).data("comment-id");
+        	let commentContents = $("#commentContents" + commentId); // 각 댓글 태그의 id
+        	let commentInput = $("#commentInput" + commentId); // 수정된 input 댓글 내용
+        	let saveCommentBtn = $(this); // 저장 버튼
+            let editCommentBtn = $("#editCommentBtn" + commentId); // 수정 버튼
+        	
+        	// 입력된 내용 가져오기
+        	let contents = commentInput.val();
+        	
+        	$.ajax({
+        		type: "put"
+        		, url: "/comment/editComment"
+        		, data: {"contents": contents, "commentId":commentId}
+        		, success:function(data) {
+        			if(data.result == "success") {
+			            commentContents.removeClass("d-none");
+			        	commentInput.addClass("d-none");
+			        	
+			        	editCommentBtn.removeClass("d-none");
+			        	saveCommentBtn.addClass("d-none");
+        				location.reload();
+        			} else { 
+        				alert("댓글 수정 실패!");
+        			}
+        		}
+        		, error:function() {
+        			alert("댓글 수정 에러!");
+        		}
+        		
+        		
+        	});
+        	
+        });
+        
+    	
+        // 댓글 작성 버튼 클릭 시
+        $("#commentBtn").on("click", function() {
+            let contents = $("#commentInput").val();
+            let postId = $(this).data("post-id");
+
+            if (contents == null) {
+                alert("댓글 내용을 입력하세요.");
+                return;
+            }
+
+            $.ajax({
+                type: "post"
+                , url: "/comment/create"
+                , data: { "postId": postId, "contents": contents }
+            	, success: function(data) {
+                    if (data.result == "success") {
+                        location.reload(); // 댓글 작성 후 페이지 새로고침
+                    } else {
+                        alert("댓글 작성 실패!");
+                    }
+                }
+            	, error: function() {
+                    alert("댓글 작성 에러!");
+                }
+            });
+        
+        });
+        
+        
+    });
+</script>
+
+</html>

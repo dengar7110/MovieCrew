@@ -25,6 +25,7 @@ public class CommentService {
 	}
 	
 	
+	// 댓글 작성하기
 	public Comment addComment(int postId, int userId, String contents) {
 		
 		Comment comment = Comment.builder()
@@ -37,7 +38,7 @@ public class CommentService {
 	}
 
 	
-	   // 특정 게시글에 달린 댓글 목록 조회
+	// 특정 게시글에 달린 댓글 목록 조회
     public List<CommentView> getCommentListByPostId(int postId) {
     	
     	List<Comment> commentList = commentRepository.findByPostId(postId);
@@ -64,18 +65,43 @@ public class CommentService {
         return commentViewList;
     }
 	
-    public Comment editComment(String contents, int commentId) {
+    
+    // 댓글 수정하기
+    public Comment editComment(int commentId, int userId, String contents) {
     	
     	Optional<Comment> optionalComment = commentRepository.findById(commentId);
     	
     	Comment comment = optionalComment.orElse(null);
     	
-    	if(contents != null) {
+    	if(comment.getUserId() == userId) {
     		comment.setContents(contents);
     		comment.setUpdatedAt(LocalDateTime.now());
+    		return commentRepository.save(comment);
+    	} else {
+    		return null;
     	}
     	
-    	return commentRepository.save(comment);
+    }
+    
+    // 댓글 삭제하기
+    public boolean deleteComment(int commentId, int userId) {
+    	
+    	Optional<Comment> optionalComment = commentRepository.findByIdAndUserId(commentId, userId);
+    	
+    	Comment comment = optionalComment.orElse(null);
+    	
+    	if(comment != null) {
+    		commentRepository.delete(comment);
+    		return true;    		
+    	} else {
+    		return false;
+    	}
+    	
+    }
+    
+    // 특정 게시글에 달린 모든 댓글 삭제
+    public void deletCommentByPostId(int postId) {
+    	commentRepository.deleteByPostId(postId);
     }
     
 }

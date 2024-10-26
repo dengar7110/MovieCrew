@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.garden.moviecrew.comment.domain.Comment;
 import com.garden.moviecrew.comment.dto.CommentView;
@@ -38,7 +39,10 @@ public class PostController {
 
     // 게시판 목록 조회
     @GetMapping("/postList/{crewId}")
-    public String postListView(@PathVariable("crewId") int crewId, HttpSession session, Model model) {
+    public String postListView(
+    		@PathVariable("crewId") int crewId
+    		, HttpSession session
+    		, Model model) {
         
     	int userId = (Integer) session.getAttribute("userId"); // 세션에서 사용자 ID 가져오기
 
@@ -57,10 +61,12 @@ public class PostController {
     @GetMapping("/postDetail/{postId}")
     public String postDetailView(
     		@PathVariable("postId") int postId
-    		, Model model
-    		, HttpSession session) {
+    		,  @RequestParam("crewId") int crewId
+    		, HttpSession session
+    		, Model model) {
         
     	int userId = (Integer)session.getAttribute("userId");
+    	
     	// 게시글 정보 불러오기
         PostView postView = postService.getPostView(postId);
 
@@ -70,7 +76,9 @@ public class PostController {
         // 모델에 게시글과 댓글 추가
         model.addAttribute("postView", postView);
         model.addAttribute("commentViewList", commentViewList);
+        model.addAttribute("nowLoginUserId", userId);
+        model.addAttribute("crewId", crewId); // crewId 추가
 
-        return "post/postViewDetail"; // 게시글 상세 화면으로 이동
+        return "post/postDetailView"; // 게시글 상세 화면으로 이동
     }
 }
