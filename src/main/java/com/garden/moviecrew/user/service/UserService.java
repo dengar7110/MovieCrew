@@ -22,6 +22,7 @@ public class UserService {
 		this.encoder = encoder;
 	}
 
+	// 회원가입
 	public User addUser(
 			String loginId
 			, String password
@@ -50,6 +51,7 @@ public class UserService {
 		
 	}
 	
+	// 회원가입 ID 중복확인
 	public boolean isDuplicateId(String loginId) {
 	
 		int count = userRepository.countByLoginId(loginId);
@@ -61,6 +63,7 @@ public class UserService {
 		}
 	}
 	
+	// 로그인
 	public User login(String loginId, String password) {
 	    Optional<User> optionalUser = userRepository.findByLoginId(loginId);
 	    
@@ -85,7 +88,7 @@ public class UserService {
 				
 	}
 	
-	
+	// 개인정보 수정
 	public User editUser(
 			int userId
 			, String password

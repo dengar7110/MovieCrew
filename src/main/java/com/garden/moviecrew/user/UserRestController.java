@@ -52,9 +52,12 @@ public class UserRestController {
         return resultMap;
     }
 
+    // 회원가입 ID 중복확인
     @GetMapping("/duplicateIdCheck")
     public Map<String, Boolean> isDuplicateId(@RequestParam("loginId") String loginId) {
+    	
         boolean idDuplicateId = userService.isDuplicateId(loginId);
+        
         Map<String, Boolean> resultMap = new HashMap<>();
         resultMap.put("isDuplicateId", idDuplicateId);
         return resultMap;
@@ -95,6 +98,7 @@ public class UserRestController {
         int userId = (Integer) session.getAttribute("userId");
 
         LocalDate birthdayDate = null;
+        
         if (birthday != null && !birthday.isEmpty()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             birthdayDate = LocalDate.parse(birthday, formatter);

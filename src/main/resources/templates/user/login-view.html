@@ -12,6 +12,7 @@
             <div class="form-group">
                 <label for="loginId">아이디</label>
                 <input type="text" id="loginIdInput" placeholder="아이디를 입력해주세요" class="form-control">
+                <div class="small text-danger d-none" id="loginIdError">아이디를 입력해주세요.</div>
             </div>
 
             <div class="form-group">
@@ -19,9 +20,10 @@
                 <div class="input-group">
                     <input type="password" id="passwordInput" placeholder="비밀번호를 입력해주세요" class="form-control">
                     <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary"></button>
+                        <button type="button" class="btn btn-outline-secondary" id="togglePassword">보기</button>
                     </div>
                 </div>
+                <div class="small text-danger d-none" id="passwordError">비밀번호를 입력해주세요.</div>
             </div>
 
             <!-- 로그인 버튼 -->
@@ -43,25 +45,60 @@
 <script layout:fragment="script">
 	$(document).ready(function() {
 		
+		
+		// 비밀번호 토글 버튼 보기, 숨기기
+        $("#togglePassword").on("click", function() {
+            let password = $("#passwordInput");
+            let type = password.attr("type");
+
+            if(type == "password") {
+            	password.attr("type", "text");
+            	$(this).text("숨기기");
+            } else {
+            	password.attr("type", "password");
+            	$(this).text("보기");
+            }
+            
+        });
+		
+		// 아이디 입력 시 중복확인 상태 초기화
+		$("#loginIdInput").on("input", function() {
+
+		    $("#loginIdError").addClass("d-none");
+		    $("#loginIdInput").removeClass("is-invalid");
+
+		});
+		
+		$("#passwordInput").on("input", function(){
+			
+			$("#passwordError").addClass("d-none");
+			$("#passwordInput").removeClass("is-invalid");
+		});
+		
+		
 		$("#loginBtn").on("click", function() {
 			
 			let loginId = $("#loginIdInput").val();
 			let password = $("#passwordInput").val();
 			
-			if(loginId == "") {
-				alert("아이디를 입력해주세요");
+			// 유효성 검사
+			if (loginId == "") {
+				$("#loginIdInput").addClass("is-invalid");
+				$("#loginIdError").removeClass("d-none");
 				return;
 			}
-			if(password == "") {
-				alert("비밀번호를 입력해주세요");
+
+			if (password == "") {
+				$("#passwordInput").addClass("is-invalid");
+				$("#passwordError").removeClass("d-none");
 				return;
 			}
 			
 			$.ajax({
-				type:"post"
-				, url:"/user/login"
-				, data:{"loginId":loginId, "password":password}
-				, success:function(data) {
+				type: "post"
+				, url: "/user/login"
+				, data: {"loginId":loginId, "password":password}
+				, success: function(data) {
 					if(data.result == "success") {
 						location.href = "/crew/crew-view";
 						return;
@@ -69,7 +106,7 @@
 						alert("로그인 실패!");
 					}
 				}
-				, error:function() {
+				, error: function() {
 					alert("로그인 에러!");
 				}
 				
