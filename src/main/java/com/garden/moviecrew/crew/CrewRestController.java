@@ -34,7 +34,7 @@ public class CrewRestController {
 		
 		int userId = (Integer)session.getAttribute("userId");
 		
-		Crew crew = crewService.addCrew(userId, title, description);
+		Crew crew = crewService.createCrew(userId, title, description);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		

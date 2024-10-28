@@ -1,12 +1,13 @@
-package com.garden.moviecrew.permission.domain;
+package com.garden.moviecrew.membership.domain;
 
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,9 +19,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-@Table(name="permission")
+@Table(name="membership")
 @Entity
-public class Permission {
+public class Membership {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,14 +33,11 @@ public class Permission {
 	@Column(name="userId")
 	private int userId;
 	
-	private boolean permission;
+    @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
+    private MembershipStatus status;
 	
 	@CreationTimestamp
-	@Column(name="createdAt")
-	private LocalDateTime createdAt;
-	
-	@UpdateTimestamp
-	@Column(name="updatedAt")
-	private LocalDateTime updatedAt;
+	@Column(name="appliedAt")
+	private LocalDateTime appliedAt;
 
 }
