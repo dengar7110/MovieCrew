@@ -9,6 +9,8 @@ import com.garden.moviecrew.crew.domain.Crew;
 import com.garden.moviecrew.crew.dto.CrewView;
 import com.garden.moviecrew.crew.repository.CrewRepository;
 import com.garden.moviecrew.membership.domain.Membership;
+import com.garden.moviecrew.membership.domain.MembershipStatus;
+import com.garden.moviecrew.membership.repository.MembershipRepository;
 import com.garden.moviecrew.membership.service.MembershipService;
 import com.garden.moviecrew.user.domain.User;
 import com.garden.moviecrew.user.service.UserService;
@@ -19,14 +21,17 @@ public class CrewService {
 	private CrewRepository crewRepository;
 	private UserService userService;
 	private MembershipService membershipService;
+	private MembershipRepository membershipRepository;
 	
 	public CrewService(
 			CrewRepository crewRepository
 			, UserService userService
-			, MembershipService membershipService) {
+			, MembershipService membershipService
+			, MembershipRepository membershipRepository) {
 		this.crewRepository = crewRepository;
 		this.userService = userService;
 		this.membershipService = membershipService;
+		this.membershipRepository = membershipRepository;
 	}
 	
 	// crew 생성
@@ -40,9 +45,16 @@ public class CrewService {
 		
 		Crew resultCrew = crewRepository.save(crew);
 
+		Membership membership = membershipService.requestMembership(resultCrew.getId(), userId);
+		
+		membershipRepository.save(membership);
+		
+		membershipService.approveMembership(resultCrew.getId(), userId);
+		
 		return resultCrew;
 	}
 	
+	// CrewView 리스트 조회
     public List<CrewView> getCrewViewList(int userId) {
     	
     	List<Crew> crewList = crewRepository.findAll();
@@ -52,15 +64,19 @@ public class CrewService {
     	User user = userService.getUserById(userId);
     	
         for (Crew crew : crewList) {
+        	
             Membership membership = membershipService.getMembership(crew.getId(), user.getId());
 
+            User creator = userService.getUserById(crew.getUserId());
+            
             CrewView crewView = CrewView.builder()
                     .crewId(crew.getId())
                     .userId(user.getId())
                     .title(crew.getTitle())
                     .description(crew.getDescription())
                     .createdAt(crew.getCreatedAt())
-                    .membershipStatus(membership != null ? membership.getStatus() : null)
+                    .status(membership != null ? membership.getStatus().name() : null)
+                    .creator(creator != null ? creator.getNickName() : null)
                     .appliedAt(membership != null ? membership.getAppliedAt() : null)
                     .build();
 

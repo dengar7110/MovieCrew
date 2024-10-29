@@ -15,7 +15,8 @@ public class CrewView {
     private int userId;
     private String title; // 크루 제목
     private String description; // 크루 설명
-    private MembershipStatus membershipStatus; // 멤버십 상태 enum 타입
+    private String status; // 멤버십 상태 enum 타입
+    private String creator;
     private LocalDateTime createdAt;
     private LocalDateTime appliedAt;
 	

@@ -19,7 +19,7 @@ public class MembershipService {
 	}
 
 		
-	// 가입 승인 요청
+	// 멤버십 가입 요청
     public Membership requestMembership(int crewId, int userId) {
     	
         Optional<Membership> optionalMembership = membershipRepository.findByCrewIdAndUserId(crewId, userId);
@@ -64,15 +64,15 @@ public class MembershipService {
         }
     }
     
-    // 모든 멤버 조회
-    public List<Membership> getCrewMembers(int crewId) {
+    // 특정 crew 의 멤버십 리스트 조회
+    public List<Membership> getMembershipList(int crewId) {
     	
     	List<Membership> membershipList = membershipRepository.findByCrewId(crewId);
     	return membershipList;
     }
 
 
-    // 현재 상태 조회
+    // 특정 crew 의 특정 user 의 멤버십 상태 조회
 	public Membership getMembership(int crewId, int userId) {
 		
 		return membershipRepository.findByCrewIdAndUserId(crewId, userId).orElse(null);

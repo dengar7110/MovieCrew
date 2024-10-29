@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.garden.moviecrew.membership.domain.Membership;
 import com.garden.moviecrew.membership.service.MembershipService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/membership")
 public class MembershipRestController {
@@ -23,7 +25,11 @@ public class MembershipRestController {
 	
 	// crew 가입 요청 API
     @PostMapping("/request")
-    public Map<String, String> requestJoin(@RequestParam int crewId, @RequestParam int userId) {
+    public Map<String, String> requestJoin(
+    		@RequestParam("crewId") int crewId
+    		, HttpSession session) {
+    	
+    	int userId = (Integer)session.getAttribute("userId");
     	
     	Membership membership = membershipService.requestMembership(crewId, userId);
     	
