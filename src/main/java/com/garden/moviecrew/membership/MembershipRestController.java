@@ -3,6 +3,7 @@ package com.garden.moviecrew.membership;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,6 +46,43 @@ public class MembershipRestController {
         
     }
 	
+    
+    @PostMapping("/approve/{crewId}/{userId}")
+    public Map<String, String> approveUser(@PathVariable("crewId") int crewId, @PathVariable("userId") int userId) {
+       
+    	membershipService.approveMembership(crewId, userId);
+    	
+    	Membership membership = membershipService.getMembership(crewId, userId);
+    	
+    	Map<String, String> resultMap = new HashMap<>();
+    	
+    	if(membership != null) {
+    		resultMap.put("result", "success");
+    	} else {
+    		resultMap.put("result", "fail");
+    	}
+    	
+        return resultMap;
+    }
+
+    @PostMapping("/reject/{crewId}/{userId}")
+    public Map<String, String> rejectUser(@PathVariable("crewId") int crewId, @PathVariable("userId") int userId) {
+    	
+    	membershipService.rejectMembership(crewId, userId);
+    	
+    	Membership membership = membershipService.getMembership(crewId, userId);
+
+    	Map<String, String> resultMap = new HashMap<>();
+    	
+    	if(membership != null) {
+    		resultMap.put("result", "success");
+    	} else {
+    		resultMap.put("result", "fail");
+    	}
+    	
+        return resultMap;
+    }
+    
 	
 	
 }

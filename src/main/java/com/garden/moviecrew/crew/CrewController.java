@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.garden.moviecrew.crew.dto.CrewView;
 import com.garden.moviecrew.crew.service.CrewService;
-import com.garden.moviecrew.membership.service.MembershipService;
 
 import jakarta.servlet.http.HttpSession;
 

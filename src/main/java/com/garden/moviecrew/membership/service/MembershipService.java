@@ -1,5 +1,6 @@
 package com.garden.moviecrew.membership.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,15 +8,20 @@ import org.springframework.stereotype.Service;
 
 import com.garden.moviecrew.membership.domain.Membership;
 import com.garden.moviecrew.membership.domain.MembershipStatus;
+import com.garden.moviecrew.membership.dto.MembershipView;
 import com.garden.moviecrew.membership.repository.MembershipRepository;
+import com.garden.moviecrew.user.domain.User;
+import com.garden.moviecrew.user.repository.UserRepository;
 
 @Service
 public class MembershipService {
 
 	private MembershipRepository membershipRepository;
+	private UserRepository userRepository;
 	
-	public MembershipService(MembershipRepository membershipRepository) {
+	public MembershipService(MembershipRepository membershipRepository, UserRepository userRepository) {
 		this.membershipRepository = membershipRepository;
+		this.userRepository = userRepository;
 	}
 
 		
@@ -64,20 +70,50 @@ public class MembershipService {
         }
     }
     
-    // 특정 crew 의 멤버십 리스트 조회
-    public List<Membership> getMembershipList(int crewId) {
+    // 특정 crew 의 특정 user 의 멤버십 상태 조회
+    public Membership getMembership(int crewId, int userId) {
+    	
+    	return membershipRepository.findByCrewIdAndUserId(crewId, userId).orElse(null);
+    }
+    
+    // 특정 crew 의 보류된 사용자, 승인된 사용자 리스트 조회
+    public List<MembershipView> getMembershipViewList(int crewId , String word) {
     	
     	List<Membership> membershipList = membershipRepository.findByCrewId(crewId);
-    	return membershipList;
+    	
+    	List<MembershipView> approvedList = new ArrayList<>();
+        List<MembershipView> pendingList = new ArrayList<>();
+    	
+    	for(Membership membership:membershipList) {
+    		
+    		User user = userRepository.findById(membership.getUserId()).orElse(null);
+    		
+    		MembershipView membershipView = MembershipView.builder()
+					    				.crewId(membership.getCrewId())
+					    				.userId(membership.getUserId())
+					    				.nickname(user.getNickName())
+					    				.status(membership.getStatus())
+					    				.appliedAt(membership.getAppliedAt())
+					    				.build();
+    		
+    		if(membership.getStatus() == MembershipStatus.APPROVED) {
+    			approvedList.add(membershipView);
+    		} else if (membership.getStatus() == MembershipStatus.PENDING) {
+    			pendingList.add(membershipView);
+    		}
+    		
+		}
+    	
+    	if("pendingUser".equals(word)) {
+    	    return pendingList;
+    	} else if("approvedUser".equals(word)) {
+    	    return approvedList;
+    	}
+    	
+    	return null;
     }
 
 
-    // 특정 crew 의 특정 user 의 멤버십 상태 조회
-	public Membership getMembership(int crewId, int userId) {
-		
-		return membershipRepository.findByCrewIdAndUserId(crewId, userId).orElse(null);
-		
-	}
     
     
 }

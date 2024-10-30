@@ -23,18 +23,23 @@
         <!-- 게시글 목록 -->
         <div class="row">
             <div class="col">
-                <div class="list-group">
-                
+                <div class="row">
                     <!-- 게시글 리스트 -->
-                    <a th:each="postView:${postViewList}" th:href="@{/post/postDetail/{postId}(postId=${postView.postId}, crewId=${crew.id})}" 
-                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 th:text="${postView.title}">게시글 제목</h5>
-                            <small th:text="${postView.nickName}">작성자</small>
+                    <div th:each="postView:${postViewList}" class="col-12 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5 class="card-title" th:text="${postView.title}">게시글 제목</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted" th:text="${postView.nickName}">작성자: ${postView.nickName}</h6>
+                                    </div>
+                                    <small class="text-muted" th:text="|작성일: ${#temporals.format(postView.createdAt, 'yyyy-MM-dd')}|">작성일</small>
+                                </div>
+                                <p class="card-text" th:text="${postView.contents}">게시글 내용 (간략히)</p>
+                                <a th:href="@{/post/postDetail/{postId}(postId=${postView.postId}, crewId=${crew.id})}" class="btn btn-primary">자세히 보기</a>
+                            </div>
                         </div>
-                        <span th:text="|작성일: ${#temporals.format(postView.createdAt, 'yyyy-MM-dd')}|">작성일</span>
-                    </a>
-                    
+                    </div>
                 </div>
             </div>
         </div>
@@ -59,7 +64,6 @@
                         <label for="postContents">게시글 내용</label>
                         <textarea class="form-control" id="postContents" rows="5" placeholder="내용을 입력하세요"></textarea>
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="savePostBtn" th:data-crew-id="${crew.id}">작성하기</button> <!-- 버튼 ID 수정 -->
@@ -68,9 +72,7 @@
             </div>
         </div>
     </div>
-
 </section>
-
 <script layout:fragment="script">
     $(document).ready(function() {
         // 게시글 작성 버튼 클릭 시 게시글 작성

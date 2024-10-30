@@ -26,8 +26,10 @@
                         <p th:text="${crew.description}">모임 설명을 여기에 적어주세요. 모임에 대한 간략한 정보를 제공합니다.</p>
                         <div class="d-flex justify-content-between">
                             
-                            <!-- 참여자 관리기능 모달창 -->
-                            <button class="btn btn-outline-primary btn-sm" id="manageBtn" data-toggle="modal" th:data-crew-id="${crew.crewId}" data-target="#manageCrewModal">참여자 관리기능</button>
+                            <!-- 참여자 관리 view 로 이동 -->
+                            <div>
+                            	<a th:href="@{/membership/manage/{crewId}(crewId=${crew.crewId})}" class="btn btn-outline-primary btn-sm">참여자 관리</a>
+                        	</div>
                             
                        		<!-- crew 의 가입자가 아닐 경우(가입하지 않은 사용자) -->
                             <div th:if="${crew.status == null}">
@@ -55,7 +57,7 @@
         
     </div>
     
-    <!-- Modal -->
+    <!-- 신규 Crew 생성 MODAL -->
     <div class="modal fade" id="createCrewModal" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -83,37 +85,13 @@
         </div>
     </div>
     
-    <!-- 참여자 관리 모달 -->
-    <div class="modal fade" id="manageCrewModal" role="dialog">
-    	<div class="modal-dialog modal-dialog-centered">
-	        <div class="modal-content">
-	            <div class="modal-header">
-	                <h5 class="modal-title">참여자 관리</h5>
-	                <button type="button" class="close" data-dismiss="modal">
-	                    <span aria-hidden="true">&times;</span>
-	                </button>
-	            </div>
-	            <div class="modal-body">
-	                <h6>승인 대기중:</h6>
-	                <ul>
-	                    <!-- PENDING 상태 사용자 리스트가 여기에 표시됩니다. -->
-	                </ul>
-	                <h6>승인된 사용자:</h6>
-	                <ul>
-	                    <!-- APPROVED 상태 사용자 리스트가 여기에 표시됩니다. -->
-	                </ul>
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-    
 </section>
 
 <script layout:fragment="script">
     $(document).ready(function() {
+    	
+	
+
     	
     	$(".joinCrewBtn").on("click", function() {
     		
