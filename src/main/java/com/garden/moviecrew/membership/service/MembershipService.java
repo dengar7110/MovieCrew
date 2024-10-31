@@ -1,5 +1,6 @@
 package com.garden.moviecrew.membership.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +34,10 @@ public class MembershipService {
         Membership membership = optionalMembership.orElse(null);
 
         if (membership != null) {
-            return membership;
+            membership.setStatus(MembershipStatus.PENDING);
+            return membershipRepository.save(membership);
         }
-
+        
         membership = Membership.builder()
                 .crewId(crewId)
                 .userId(userId)
@@ -53,6 +55,7 @@ public class MembershipService {
         
         if(membership != null) {
         	membership.setStatus(MembershipStatus.APPROVED);
+        	membership.setUpdatedAt(LocalDateTime.now());
         	membershipRepository.save(membership);
         }
     }
@@ -66,6 +69,7 @@ public class MembershipService {
         
         if(membership != null) {
         	membership.setStatus(MembershipStatus.REJECTED);
+        	membership.setUpdatedAt(LocalDateTime.now());
         	membershipRepository.save(membership);
         }
     }
@@ -94,6 +98,7 @@ public class MembershipService {
 					    				.nickname(user.getNickName())
 					    				.status(membership.getStatus())
 					    				.appliedAt(membership.getAppliedAt())
+					    				.updatedAt(membership.getUpdatedAt())
 					    				.build();
     		
     		if(membership.getStatus() == MembershipStatus.APPROVED) {

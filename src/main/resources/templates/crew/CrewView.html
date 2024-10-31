@@ -24,29 +24,32 @@
                         	<h6 th:text=${crew.creator}>모임 개설자 닉네임</h6>
                     	</div>
                         <p th:text="${crew.description}">모임 설명을 여기에 적어주세요. 모임에 대한 간략한 정보를 제공합니다.</p>
-                        <div class="d-flex justify-content-between">
-                            
-                            <!-- 참여자 관리 view 로 이동 -->
-                            <div>
-                            	<a th:href="@{/membership/manage/{crewId}(crewId=${crew.crewId})}" class="btn btn-outline-primary btn-sm">참여자 관리</a>
-                        	</div>
-                            
-                       		<!-- crew 의 가입자가 아닐 경우(가입하지 않은 사용자) -->
-                            <div th:if="${crew.status == null}">
-                            	<button class="btn btn-outline-primary btn-sm joinCrewBtn" th:data-crew-id="${crew.crewId}">가입하기</button>
-                        	</div>
-                            
-                            <!-- crew 의 가입자인 경우(가입 승인된 사용자) -->
-                            <div th:if="${crew.status == 'APPROVED'}">
-                            	<a th:href="@{/post/postList/{crewId}(crewId=${crew.crewId})}" class="btn btn-outline-primary btn-sm">입장하기</a>
-                        	</div>
-                            
-                            <!-- 가입 승인 보류상태 -->
-                            <div th:if="${crew.status == 'PENDING'}">
-                            	<button class="btn btn-warning btn-sm" disabled>승인 대기중</button>
-                        	</div>
-                            
-                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                        
+						    <!-- 참여자 관리 view 로 이동 -->
+						    <div th:if="${crew.userId == session.userId}">
+						        <a th:href="@{/membership/manage/{crewId}(crewId=${crew.crewId})}" class="btn btn-outline-primary btn-sm">참여자 관리</a>
+						    </div>
+						        
+						    <div class="ml-auto">
+						        <!-- crew 의 가입자가 아닐 경우(가입하지 않은 사용자) -->
+						        <div th:if="${crew.status == 'REJECTED' || crew.status == null}">
+						            <button class="btn btn-outline-primary btn-sm joinReqeustCrewBtn" th:data-crew-id="${crew.crewId}">가입하기</button>
+						        </div>
+						        
+						        <!-- crew 의 가입자인 경우(가입 승인된 사용자) -->
+						        <div th:if="${crew.status == 'APPROVED'}">
+						            <a th:href="@{/post/postList/{crewId}(crewId=${crew.crewId})}" class="btn btn-outline-primary btn-sm">입장하기</a>
+						        </div>
+						        
+						        <!-- 가입 승인 보류상태 -->
+						        <div th:if="${crew.status == 'PENDING'}">
+						            <button class="btn btn-warning btn-sm" disabled>승인 대기중</button>
+						        </div>
+						    </div>
+						    
+						</div>
                     </div>
                     <div class="card-footer text-muted">
                         <span th:text="|모임 개설 날짜 : ${#temporals.format(crew.createdAt, 'yyyy-MM-dd')}|"></span>
@@ -88,12 +91,10 @@
 </section>
 
 <script layout:fragment="script">
-    $(document).ready(function() {
-    	
-	
 
-    	
-    	$(".joinCrewBtn").on("click", function() {
+    $(document).ready(function() {
+	
+    	$(".joinReqeustCrewBtn").on("click", function() {
     		
     		let crewId = $(this).data("crew-id");
     		
@@ -111,7 +112,6 @@
     			, error: function () {
     				alert("가입 요청 에러!");
     			}
-    			
     		});
     		
     	});

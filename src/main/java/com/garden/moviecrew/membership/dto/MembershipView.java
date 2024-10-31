@@ -16,8 +16,10 @@ public class MembershipView {
     
     private int userId;
     private String nickname;
-    private MembershipStatus status; 
+    private MembershipStatus status;
     private LocalDateTime appliedAt;
+    private LocalDateTime updatedAt;
+
     
     private List<MembershipView> pendingUsers;
     

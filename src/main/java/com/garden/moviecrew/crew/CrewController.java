@@ -30,6 +30,7 @@ public class CrewController {
 		List<CrewView> crewViewList = crewService.getCrewViewList(userId);
 
 		model.addAttribute("crewViewList", crewViewList);
+		model.addAttribute("userId", userId);
 		
 		return "/crew/crewView";
 	}

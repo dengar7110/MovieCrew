@@ -7,7 +7,7 @@
 <section layout:fragment="contents">
     <div class="container mt-5">
         <h2 class="text-center">참여자 관리</h2>
-        <h4 class="text-center" th:text="'모임 제목: ' + ${crewTitle}">모임 제목</h4>
+        <h4 class="text-center" th:text="|모임 제목: ${crew.title}|">모임 제목</h4>
 
         <!-- 승인된 사용자 목록 -->
         <div class="card mt-4">
@@ -15,16 +15,12 @@
                 <h5 class="mb-0">승인된 사용자</h5>
             </div>
             <ul class="list-group list-group-flush">
-                <li th:each="member : ${approvedList}" class="list-group-item d-flex justify-content-between align-items-center">
+                <li th:each="member:${approvedList}" class="list-group-item d-flex justify-content-between align-items-center">
                     <div class="d-flex flex-column">
                         <span th:text="${member.nickname}">닉네임</span>
                         <small class="text-muted" th:text="${#temporals.format(member.appliedAt, 'yyyy-MM-dd HH:mm')}">가입 날짜</small>
                     </div>
-                    <button class="btn btn-danger btn-sm rejectUserBtn" 
-                            th:data-crew-id="${member.crewId}" 
-                            th:data-user-id="${member.userId}">
-                        거부
-                    </button>
+                    <button class="btn btn-danger btn-sm rejectUserBtn" th:if="${member.userId != crew.userId}" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">추방</button>
                 </li>
             </ul>
         </div>
@@ -35,27 +31,71 @@
                 <h5 class="mb-0">대기 중인 사용자</h5>
             </div>
             <ul class="list-group list-group-flush">
-                <li th:each="member : ${pendingList}" class="list-group-item d-flex justify-content-between align-items-center">
+                <li th:each="member:${pendingList}" class="list-group-item d-flex justify-content-between align-items-center">
                     <div class="d-flex flex-column">
                         <span th:text="${member.nickname}">닉네임</span>
                         <small class="text-muted" th:text="${#temporals.format(member.appliedAt, 'yyyy-MM-dd HH:mm')}">가입 요청 날짜</small>
                     </div>
                     <div>
-                        <button class="btn btn-success btn-sm approveUserBtn" 
-                                th:data-crew-id="${member.crewId}" 
-                                th:data-user-id="${member.userId}">
-                            승인
-                        </button>
-                        <button class="btn btn-danger btn-sm rejectUserBtn" 
-                                th:data-crew-id="${member.crewId}" 
-                                th:data-user-id="${member.userId}">
-                            거부
-                        </button>
+                        <button class="btn btn-success btn-sm approveUserBtn" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">승인</button>
+                        <button class="btn btn-danger btn-sm rejectUserBtn" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">거절</button>
                     </div>
                 </li>
             </ul>
         </div>
     </div>
 </section>
+
+<script layout:fragment="script">
+
+	$(document).ready(function() {
+		
+		$(".approveUserBtn").on("click", function() {
+			
+			let userId = $(this).data("user-id");
+			let crewId = $(this).data("crew-id");
+			
+			$.ajax({
+				type: "put"
+				, url: "/membership/approve/" + crewId + "/" + userId
+				, data: {"userId":userId, "crewId":crewId}
+				, success: function(data) {
+					if(data.result == "success") {
+						location.reload();
+					} else {
+						alert("가입 승인 실패!");
+					}
+				}
+				, error: function() {
+					alert("가입 승인 에러!");
+				}
+			});
+		});
+		
+		$(".rejectUserBtn").on("click", function() {
+			
+			let userId = $(this).data("user-id");
+			let crewId = $(this).data("crew-id");
+			
+			$.ajax({
+				type: "put"
+				, url: "/membership/reject/" + crewId + "/" + userId
+				, data: {"userId":userId, "crewId":crewId}
+				, success: function(data) {
+					if(data.result == "success") {
+						location.reload();
+					} else {
+						alert("가입 거절 실패!");
+					}
+				}
+				, error: function() {
+					alert("가입 거절 에러!");
+				}
+			});
+		});
+		
+	});
+
+</script>
 
 </html>

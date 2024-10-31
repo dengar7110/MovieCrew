@@ -3,6 +3,7 @@ package com.garden.moviecrew.membership.domain;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,5 +44,9 @@ public class Membership {
 	@CreationTimestamp
 	@Column(name="appliedAt")
 	private LocalDateTime appliedAt;
+	
+	@UpdateTimestamp
+	@Column(name="updatedAt")
+	private LocalDateTime updatedAt;
 
 }

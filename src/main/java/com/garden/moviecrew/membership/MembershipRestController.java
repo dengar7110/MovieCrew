@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,7 +48,7 @@ public class MembershipRestController {
     }
 	
     
-    @PostMapping("/approve/{crewId}/{userId}")
+    @PutMapping("/approve/{crewId}/{userId}")
     public Map<String, String> approveUser(@PathVariable("crewId") int crewId, @PathVariable("userId") int userId) {
        
     	membershipService.approveMembership(crewId, userId);
@@ -65,7 +66,7 @@ public class MembershipRestController {
         return resultMap;
     }
 
-    @PostMapping("/reject/{crewId}/{userId}")
+    @PutMapping("/reject/{crewId}/{userId}")
     public Map<String, String> rejectUser(@PathVariable("crewId") int crewId, @PathVariable("userId") int userId) {
     	
     	membershipService.rejectMembership(crewId, userId);

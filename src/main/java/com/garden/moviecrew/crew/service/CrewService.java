@@ -71,13 +71,12 @@ public class CrewService {
             
             CrewView crewView = CrewView.builder()
                     .crewId(crew.getId())
-                    .userId(user.getId())
+                    .userId(creator.getId())
                     .title(crew.getTitle())
                     .description(crew.getDescription())
                     .createdAt(crew.getCreatedAt())
                     .status(membership != null ? membership.getStatus().name() : null)
                     .creator(creator != null ? creator.getNickName() : null)
-                    .appliedAt(membership != null ? membership.getAppliedAt() : null)
                     .build();
 
             crewViewList.add(crewView);
@@ -86,9 +85,9 @@ public class CrewService {
         return crewViewList;
     }
 	
-	public Crew getCrewById(int id) {
+	public Crew getCrewById(int crewId) {
 		
-		return crewRepository.findById(id).orElse(null);
+		return crewRepository.findById(crewId).orElse(null);
 	}
 	
 	
