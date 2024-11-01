@@ -47,8 +47,13 @@ public class UserRestController {
         User user = userService.addUser(loginId, password, name, nickName, birthdayDate, email, gender);
 
         Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("result", user != null ? "success" : "fail");
-
+        
+        if(user != null) {
+        	resultMap.put("result", "success");
+        } else {
+        	resultMap.put("result", "success");
+        }
+        
         return resultMap;
     }
 
@@ -109,6 +114,7 @@ public class UserRestController {
         session.setAttribute("userNickName", user.getNickName());
         
         Map<String, String> resultMap = new HashMap<>();
+        
         resultMap.put("result", user != null ? "success" : "fail");
 
         return resultMap;

@@ -22,7 +22,7 @@ public class CrewController {
 		this.crewService = crewService;
 	}
 
-	@GetMapping("/crew-view")
+	@GetMapping("/crewView")
 	public String crewView(Model model, HttpSession session) {
 		
 		int userId = (Integer)session.getAttribute("userId");

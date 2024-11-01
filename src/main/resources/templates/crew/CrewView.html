@@ -7,9 +7,7 @@
     <div class="container mt-5">
         <!-- 모임 개설 버튼 -->
         <div class="d-flex justify-content-end mb-4">
-            <button type="button" class="btn btn-primary btn-lg" id="createBtn" data-toggle="modal" data-target="#createCrewModal">
-                모임 개설하기
-            </button>
+            <button type="button" class="btn btn-primary btn-lg" id="createBtn" data-toggle="modal" data-target="#createCrewModal">모임 개설하기</button>
         </div>
 
         <!-- 개설된 모임들 -->
@@ -27,9 +25,9 @@
                         
                         <div class="d-flex justify-content-between align-items-center">
                         
-						    <!-- 참여자 관리 view 로 이동 -->
+						    <!-- 모임 관리 view 로 이동 -->
 						    <div th:if="${crew.userId == session.userId}">
-						        <a th:href="@{/membership/manage/{crewId}(crewId=${crew.crewId})}" class="btn btn-outline-primary btn-sm">참여자 관리</a>
+						        <a th:href="@{/membership/manage/{crewId}(crewId=${crew.crewId})}" class="btn btn-outline-primary btn-sm">모임 관리</a>
 						    </div>
 						        
 						    <div class="ml-auto">
@@ -67,7 +65,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">신규 크루 만들기</h5>
                     <button type="button" class="close" data-dismiss="modal">
-                        <span aria-hidden="true">&times;</span>
+                        <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">

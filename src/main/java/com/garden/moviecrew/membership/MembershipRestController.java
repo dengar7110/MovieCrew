@@ -47,7 +47,7 @@ public class MembershipRestController {
         
     }
 	
-    
+    // crew 가입 승인 API
     @PutMapping("/approve/{crewId}/{userId}")
     public Map<String, String> approveUser(@PathVariable("crewId") int crewId, @PathVariable("userId") int userId) {
        
@@ -66,6 +66,7 @@ public class MembershipRestController {
         return resultMap;
     }
 
+    // crew 가입 거절 API
     @PutMapping("/reject/{crewId}/{userId}")
     public Map<String, String> rejectUser(@PathVariable("crewId") int crewId, @PathVariable("userId") int userId) {
     	

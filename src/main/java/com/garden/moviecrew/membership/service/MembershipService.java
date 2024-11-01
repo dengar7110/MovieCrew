@@ -35,6 +35,7 @@ public class MembershipService {
 
         if (membership != null) {
             membership.setStatus(MembershipStatus.PENDING);
+            membership.setAppliedAt(LocalDateTime.now());
             return membershipRepository.save(membership);
         }
         

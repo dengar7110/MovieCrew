@@ -1,5 +1,6 @@
 package com.garden.moviecrew.crew.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +89,21 @@ public class CrewService {
 	public Crew getCrewById(int crewId) {
 		
 		return crewRepository.findById(crewId).orElse(null);
+	}
+	
+	// Crew 정보 수정하기
+	public Crew editCrewByCrewId(int crewId, String title, String description) {
+		
+		 Crew crew = getCrewById(crewId);
+		 
+		 if(crew != null) {
+			 crew.setTitle(title);
+			 crew.setDescription(description);
+			 crew.setUpdatedAt(LocalDateTime.now());
+			 crewRepository.save(crew);
+		 } 
+		 
+		 return crew;
 	}
 	
 	

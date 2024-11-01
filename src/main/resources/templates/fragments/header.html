@@ -7,18 +7,18 @@
 				<ul class="nav nav-fill">
 		            <li class="nav-item"><a class="nav-link" href="#">Introduce</a></li>
 		            <li th:if="${session.userId != null}" class="nav-item">
-		            	<a class="nav-link" href="/crew/crew-view">Crew</a>
+		            	<a class="nav-link" href="/crew/crewView">Crew</a>
 		            </li>
 		            <li th:if="${session.userId !=null}" class="nav-item">
 		            	<a class="nav-link" href="#">Board</a>
 		            </li>
 		            <li class="nav-item"><a class="nav-link" href="#">MovieInfo</a></li>
 		            <li th:if="${session.userId == null}" class="nav-item">
-		            	<a class="nav-link" href="/user/login-view">Login</a>
+		            	<a class="nav-link" href="/user/loginView">Login</a>
 		            </li>
 		            
 		            <li th:if="${session.userId != null}" class="nav-item">
-		            	<a class="nav-link" href="/user/edit-view">Mypage</a>
+		            	<a class="nav-link" href="/user/editView">Mypage</a>
 		            </li>
 		            <li th:if="${session.userId != null}" class="nav-item">
 		                <span class="nav-link" th:text="|${session.userNickName} 님|"></span>

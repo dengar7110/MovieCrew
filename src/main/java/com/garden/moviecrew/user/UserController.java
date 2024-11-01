@@ -25,19 +25,19 @@ public class UserController {
 		this.userService = userService;
 	}
 	
-	@GetMapping("/join-view")
+	@GetMapping("/joinView")
 	public String joinView() {
 		
 		return "user/joinView";
 	}
 	
-	@GetMapping("/login-view")
+	@GetMapping("/loginView")
 	public String loginView() {
 		
-		return "user/login-view";
+		return "user/loginView";
 	}
 	
-	@GetMapping("/edit-view")
+	@GetMapping("/editView")
 	public String editView(Model model, HttpSession session) {
 		
 		Integer userId = (Integer)session.getAttribute("userId");
@@ -51,7 +51,7 @@ public class UserController {
 		model.addAttribute("formattedBirthday", formattedBirthday);
 		
 		
-		return "user/edit-view";
+		return "user/editView";
 	}
 	
     @GetMapping("/logout")
@@ -59,7 +59,7 @@ public class UserController {
     	
         session.removeAttribute("userId");
         
-        return "redirect:/user/login-view";
+        return "redirect:/user/loginView";
     }
 
 }

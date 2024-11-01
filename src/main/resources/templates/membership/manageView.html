@@ -6,8 +6,32 @@
 
 <section layout:fragment="contents">
     <div class="container mt-5">
-        <h2 class="text-center">참여자 관리</h2>
-        <h4 class="text-center" th:text="|모임 제목: ${crew.title}|">모임 제목</h4>
+        
+         <!-- 모임 정보 카드 -->
+        <div class="card mb-5 shadow-sm">
+		    <div class="card-body p-4">
+		        <!-- 모임 제목 -->
+		        <h2 class="text-center mb-4" th:text="${crew.title}">모임 제목</h2>
+		        
+		        <div class="text-center mb-4">
+		            <!-- 개설자 정보 및 생성 시기 -->
+		            <p class="h6 text-secondary mb-1">
+		                <span th:text="|${session.userNickName} 님의 모임|" class="font-weight-bold">모임장 닉네임</span>
+		            </p>
+		            <p class="h6 text-secondary mb-1">
+		                <span th:text="|개설일: ${#temporals.format(crew.createdAt, 'yyyy-MM-dd')}|" class="font-weight-bold">2024-01-01</span>
+		            </p>
+		        </div>
+		
+		        <!-- 모임 설명 -->
+		        <h4 class="text-center mb-4" th:text="${crew.description}">모임 설명</h4>
+		
+		        <!-- 모임 정보 수정 버튼 -->
+		        <div class="text-center">
+		            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#editCrewModal">모임 정보 수정</button>
+		        </div>
+		    </div>
+		</div>
 
         <!-- 승인된 사용자 목록 -->
         <div class="card mt-4">
@@ -18,7 +42,7 @@
                 <li th:each="member:${approvedList}" class="list-group-item d-flex justify-content-between align-items-center">
                     <div class="d-flex flex-column">
                         <span th:text="${member.nickname}">닉네임</span>
-                        <small class="text-muted" th:text="${#temporals.format(member.appliedAt, 'yyyy-MM-dd HH:mm')}">가입 날짜</small>
+                        <small class="text-muted" th:text="${#temporals.format(member.updatedAt, 'yyyy-MM-dd HH:mm')}">가입 날짜</small>
                     </div>
                     <button class="btn btn-danger btn-sm rejectUserBtn" th:if="${member.userId != crew.userId}" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">추방</button>
                 </li>
@@ -44,11 +68,67 @@
             </ul>
         </div>
     </div>
+    
+    <!-- 모임 정보 수정 모달 -->
+    <div class="modal fade" id="editCrewModal" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCrewModalLabel">모임 정보 수정</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+	                <input type="hidden" id="crewId" th:value="${crew.title}">
+	                <div class="form-group">
+	                    <label for="editTitle">모임 제목</label>
+	                    <input type="text" class="form-control" id="editTitleInput" th:value="${crew.title}" placeholder="제목을 입력하세요">
+	                </div>
+	                <div class="form-group">
+	                    <label for="editDescription">모임 설명</label>
+	                    <textarea class="form-control" id="editDescriptionInput" rows="4" th:text="${crew.description}" placeholder="설명을 입력하세요"></textarea>
+	                </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="editCrewBtn" th:data-crew-id="${crew.Id}">수정하기</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </section>
 
 <script layout:fragment="script">
 
 	$(document).ready(function() {
+		
+		$("#editCrewBtn").on("click", function() {
+			
+			let crewId = $(this).data("crew-id");
+			let title = $("#editTitleInput").val();
+			let description = $("#editDescriptionInput").val(); 
+			
+			$.ajax({
+				type: "put"
+				, url: "/crew/editCrew"
+				, data: {"crewId":crewId, "title":title, "description":description}
+				, success: function(data) {
+					if(data.result == "success") {
+						location.reload();				
+					} else {
+						alert("모임 정보 수정 실패!");
+					}
+				}
+				, error: function() {
+					alert("모임 정보 수정 에러!");
+				}
+			});
+			
+		});
+		
+		
 		
 		$(".approveUserBtn").on("click", function() {
 			
