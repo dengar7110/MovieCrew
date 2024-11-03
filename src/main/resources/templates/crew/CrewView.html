@@ -38,7 +38,7 @@
 						        
 						        <!-- crew 의 가입자인 경우(가입 승인된 사용자) -->
 						        <div th:if="${crew.status == 'APPROVED'}">
-						            <a th:href="@{/post/postList/{crewId}(crewId=${crew.crewId})}" class="btn btn-outline-primary btn-sm">입장하기</a>
+						            <a th:href="@{/post/postlist/{crewId}(crewId=${crew.crewId})}" class="btn btn-outline-primary btn-sm">입장하기</a>
 						        </div>
 						        
 						        <!-- 가입 승인 보류상태 -->

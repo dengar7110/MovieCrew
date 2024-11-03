@@ -26,9 +26,10 @@
 		        <!-- 모임 설명 -->
 		        <h4 class="text-center mb-4" th:text="${crew.description}">모임 설명</h4>
 		
-		        <!-- 모임 정보 수정 버튼 -->
+		        <!-- 모임 정보 수정 및 삭제 버튼 -->
 		        <div class="text-center">
-		            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#editCrewModal">모임 정보 수정</button>
+		            <button type="button" class="btn btn-outline-secondary mr-2" data-toggle="modal" data-target="#editCrewModal">모임 정보 수정</button>
+		            <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteCrewModal">모임 삭제</button>
 		        </div>
 		    </div>
 		</div>
@@ -98,11 +99,57 @@
         </div>
     </div>
     
+    <!-- 모임 삭제 확인 모달 -->
+		<div class="modal fade" id="deleteCrewModal">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <h5 class="modal-title" id="deleteCrewModalLabel">모임 삭제</h5>
+		                <button type="button" class="close" data-dismiss="modal">
+		                    <span>&times;</span>
+		                </button>
+		            </div>
+		            <div class="modal-body">
+		                <p>정말로 이 모임을 삭제하시겠습니까?</p>
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-danger" id="deleteCrewBtn" th:data-crew-id="${crew.Id}">삭제</button>
+		                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+    
 </section>
 
 <script layout:fragment="script">
 
 	$(document).ready(function() {
+		
+		$("#deleteCrewBtn").on("click", function() {
+			
+			let crewId = $(this).data("crew-id");
+			
+			$.ajax({
+				type: "delete"
+				, url: "/crew/deleteCrew"
+				, data: {"crewId":crewId}
+				, success: function(data) {
+					if(data.result == "success") {
+						location.href = "/crew/crew-view";
+					} else {
+						alert("크루 삭제 실패!");
+					}
+					
+				}
+				, error: function() {
+					alert("크루 삭제 에러!");
+				}
+				
+			});
+			
+			
+		});
 		
 		$("#editCrewBtn").on("click", function() {
 			

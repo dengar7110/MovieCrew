@@ -119,6 +119,10 @@ public class MembershipService {
     	return null;
     }
 
+    public void deleteMembershipByCrewId(int crewId) {
+    	membershipRepository.deleteByCrewId(crewId);
+    }
+    
 
     
     

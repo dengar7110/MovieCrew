@@ -76,9 +76,7 @@ public class PostService {
     // 게시글 수정하기
     public Post editPost(int postId, int userId, String title, String contents) {
     	
-    	Optional<Post> optionalPost =  postRepository.findById(postId);
-    	
-    	Post post = optionalPost.orElse(null);
+    	Post post =  postRepository.findById(postId).orElse(null);
     	
     	if(post.getUserId() == userId) {
     		post.setTitle(title);
@@ -92,15 +90,15 @@ public class PostService {
     	return post;
     }
     
-    // 게시글 삭제하기
+    // 단일 게시글 삭제하기
     public boolean deletePost(int postId, int userId) {
     	
-    	Optional<Post> optionalPost =  postRepository.findByIdAndUserId(postId, userId);
-    	
-    	Post post = optionalPost.orElse(null);
+    	Post post =  postRepository.findByIdAndUserId(postId, userId).orElse(null);
     	
     	if(post != null) {
-    		commentService.deletCommentByPostId(postId);
+    		// 해당 게시글의 댓글 삭제
+    		commentService.deleteCommentByPostId(postId);
+    		// 게시글 삭제
     		postRepository.delete(post);
     		return true;
     	} else {
@@ -109,12 +107,23 @@ public class PostService {
     	
     }
     
+    // Crew 에 관련된 게시글, 댓글 삭제하기
+    public void deletePostByCrewId(int crewId) {
+    	
+    	// crewId로 모든 게시글을 가져오기
+        List<Post> postList = postRepository.findByCrewId(crewId);
+        
+        // 각 게시글에 대해 댓글을 삭제
+        for (Post post : postList) {
+            commentService.deleteCommentByPostId(post.getId());
+        }
+    	postRepository.deleteByCrewId(crewId);
+    }
 
     // 게시글 ID로 게시글 조회
     public PostView getPostView(int postId) {
     	
-        Optional<Post> optionalPost = postRepository.findById(postId);
-        Post post = optionalPost.orElse(null);
+    	Post post =  postRepository.findById(postId).orElse(null);
 
        	User user = userService.getUserById(post.getUserId());
 

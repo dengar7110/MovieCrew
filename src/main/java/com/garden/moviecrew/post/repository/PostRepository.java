@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.garden.moviecrew.post.domain.Post;
 
+import jakarta.transaction.Transactional;
+
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
 	//userId 와 crewId 가 일치하는 게시물 목록
@@ -20,4 +22,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     // postId 와 userId 가 일치하는 게시물
     public Optional<Post> findByIdAndUserId(int id, int userId);
     
+    @Transactional
+    public void deleteByCrewId(int crewId);
 }

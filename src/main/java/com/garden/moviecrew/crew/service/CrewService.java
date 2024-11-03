@@ -6,13 +6,14 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.garden.moviecrew.comment.service.CommentService;
 import com.garden.moviecrew.crew.domain.Crew;
 import com.garden.moviecrew.crew.dto.CrewView;
 import com.garden.moviecrew.crew.repository.CrewRepository;
 import com.garden.moviecrew.membership.domain.Membership;
-import com.garden.moviecrew.membership.domain.MembershipStatus;
 import com.garden.moviecrew.membership.repository.MembershipRepository;
 import com.garden.moviecrew.membership.service.MembershipService;
+import com.garden.moviecrew.post.service.PostService;
 import com.garden.moviecrew.user.domain.User;
 import com.garden.moviecrew.user.service.UserService;
 
@@ -21,16 +22,19 @@ public class CrewService {
 
 	private CrewRepository crewRepository;
 	private UserService userService;
+	private PostService postService;
 	private MembershipService membershipService;
 	private MembershipRepository membershipRepository;
 	
 	public CrewService(
 			CrewRepository crewRepository
 			, UserService userService
+			, PostService postService
 			, MembershipService membershipService
 			, MembershipRepository membershipRepository) {
 		this.crewRepository = crewRepository;
 		this.userService = userService;
+		this.postService = postService;
 		this.membershipService = membershipService;
 		this.membershipRepository = membershipRepository;
 	}
@@ -104,6 +108,25 @@ public class CrewService {
 		 } 
 		 
 		 return crew;
+	}
+	
+	
+	// Crew 삭제하기
+	public boolean deleteCrew(int crewId, int userId) {
+		
+		Crew crew = crewRepository.findById(crewId).orElse(null);
+		
+		if(crew != null && crew.getUserId() == userId) {
+			// Crew 에 관련된 모든 게시글과 댓글 삭제 
+			postService.deletePostByCrewId(crewId);
+			// Crew 에 과련된 멤버십 삭제
+			membershipService.deleteMembershipByCrewId(crewId);
+			// Crew 삭제
+			crewRepository.delete(crew);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	

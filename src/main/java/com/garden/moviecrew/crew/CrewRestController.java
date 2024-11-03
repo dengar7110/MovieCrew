@@ -74,9 +74,21 @@ public class CrewRestController {
 	
 	// crew 삭제 API
 	@DeleteMapping("/deleteCrew")
-	public Map<String, String> deleteCrew() {
+	public Map<String, String> deleteCrew(
+			@RequestParam("crewId") int crewId
+			, HttpSession session) {
+		
+		int userId = (Integer)session.getAttribute("userId");
 		
 		Map<String, String> resultMap = new HashMap<>();
+		
+		if(crewService.deleteCrew(crewId, userId)) {
+			resultMap.put("result", "success");
+		} else {
+			resultMap.put("result", "fail");
+		}
+		
+		
 		return resultMap;
 	}
 	

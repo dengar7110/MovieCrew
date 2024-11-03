@@ -36,7 +36,7 @@
                                     <small class="text-muted" th:text="|작성일: ${#temporals.format(postView.createdAt, 'yyyy-MM-dd')}|">작성일</small>
                                 </div>
                                 <p class="card-text" th:text="${postView.contents}">게시글 내용 (간략히)</p>
-                                <a th:href="@{/post/postDetail/{postId}(postId=${postView.postId}, crewId=${crew.id})}" class="btn btn-primary">자세히 보기</a>
+                                <a th:href="@{/post/postdetail/{postId}(postId=${postView.postId}, crewId=${crew.id})}" class="btn btn-primary">자세히 보기</a>
                             </div>
                         </div>
                     </div>

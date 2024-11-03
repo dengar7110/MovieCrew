@@ -38,7 +38,7 @@ public class PostController {
     }
 
     // 게시판 목록 조회
-    @GetMapping("/postList/{crewId}")
+    @GetMapping("/postlist/{crewId}")
     public String postListView(
     		@PathVariable("crewId") int crewId
     		, HttpSession session
@@ -58,7 +58,7 @@ public class PostController {
     }
 
     // 게시글 상세보기 조회
-    @GetMapping("/postDetail/{postId}")
+    @GetMapping("/postdetail/{postId}")
     public String postDetailView(
     		@PathVariable("postId") int postId
     		,  @RequestParam("crewId") int crewId

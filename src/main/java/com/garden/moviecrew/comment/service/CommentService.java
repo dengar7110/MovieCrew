@@ -100,7 +100,7 @@ public class CommentService {
     }
     
     // 특정 게시글에 달린 모든 댓글 삭제
-    public void deletCommentByPostId(int postId) {
+    public void deleteCommentByPostId(int postId) {
     	commentRepository.deleteByPostId(postId);
     }
     
