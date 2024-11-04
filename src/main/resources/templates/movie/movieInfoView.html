@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<section layout:fragment="contents">
+
+	<h1>Top Rated Movies</h1>
+    <div th:each="movie : ${movies}">
+        <h2 th:text="${movie.title}"></h2>
+        <p th:text="${movie.overview}"></p>
+		<img th:src="'https://image.tmdb.org/t/p/w92/' + ${movie.posterPath}" alt="Poster"/>
+    </div>
+
+</section>
+
+      
+</html>
