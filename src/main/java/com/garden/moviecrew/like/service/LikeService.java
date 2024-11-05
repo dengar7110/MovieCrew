@@ -14,12 +14,13 @@ public class LikeService {
 		this.likeRepository = likeRepository;
 	}
 	
-	public Like addLike(int postdId, int userId) {
+	public Like addLike(int postId, int userId) {
 		
 		Like like = Like.builder()
-					.postId(postdId)
+					.postId(postId)
 					.userId(userId)
 					.build();
+		
 		return likeRepository.save(like);
 	}
 	
@@ -41,9 +42,8 @@ public class LikeService {
 		
 	}
 	
-	// 특정사용자가 특정 게시글에 좋아요를 했는지 안했는지
 	public boolean isLikeByPostIdAndUserId(int postId, int userId) {
-		// 특정 userId 와 postId 가 일치하는 행 조회
+		
 		int count = likeRepository.countByPostIdAndUserId(postId, userId);
 		
 		if(count == 0) {

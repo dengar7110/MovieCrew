@@ -68,7 +68,7 @@ public class PostController {
     	int userId = (Integer)session.getAttribute("userId");
     	
     	// 게시글 정보 불러오기
-        PostView postView = postService.getPostView(postId);
+        PostView postView = postService.getPostView(postId, userId);
 
         // 댓글 목록 불러오기
         List<CommentView> commentViewList = commentService.getCommentListByPostId(postId);

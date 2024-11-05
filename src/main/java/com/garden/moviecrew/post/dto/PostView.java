@@ -15,10 +15,14 @@ public class PostView {
     private int userId;
     private String title;
     private String contents;
+	private String imagePath;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
     private String nickName;
     private String commentor;
     private List<CommentView> commentList;
+    
+    private int likeCount;
+	private boolean isLike;
 }

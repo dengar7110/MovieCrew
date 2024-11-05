@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.garden.moviecrew.post.domain.Post; // Board에서 Post로 변경
 import com.garden.moviecrew.post.service.PostService; // BoardService에서 PostService로 변경
@@ -28,14 +29,15 @@ public class PostRestController {
     // 게시글 작성하기
     @PostMapping("/createPost") 
     public Map<String, String> createPost(
-            @RequestParam("title") String title,
-            @RequestParam("contents") String contents,
-            @RequestParam("crewId") int crewId,
+            @RequestParam("title") String title
+            , @RequestParam("contents") String contents
+    		, @RequestParam("imageFile") MultipartFile file
+            , @RequestParam("crewId") int crewId,
             HttpSession session) {
         
         int userId = (Integer) session.getAttribute("userId");
 
-        Post post = postService.addPost(userId, crewId, title, contents);
+        Post post = postService.addPost(userId, crewId, title, contents, file);
 
         Map<String, String> resultMap = new HashMap<>();
 
@@ -54,11 +56,12 @@ public class PostRestController {
     		@RequestParam("postId") int postId
     		, @RequestParam("title") String title
     		, @RequestParam("contents") String contents
+    		, @RequestParam("imageFile") MultipartFile file
     		, HttpSession session) {
     	
     	int userId = (Integer)session.getAttribute("userId");
     	
-    	Post post = postService.editPost(postId, userId, title, contents);
+    	Post post = postService.editPost(postId, userId, title, contents, file);
     	
     	Map<String, String> resultMap = new HashMap<>();
     	

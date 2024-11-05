@@ -3,12 +3,14 @@ package com.garden.moviecrew.post.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.garden.moviecrew.comment.dto.CommentView;
 import com.garden.moviecrew.comment.service.CommentService;
+import com.garden.moviecrew.common.FileManager;
+import com.garden.moviecrew.like.service.LikeService;
 import com.garden.moviecrew.post.domain.Post;
 import com.garden.moviecrew.post.dto.PostView;
 import com.garden.moviecrew.post.repository.PostRepository;
@@ -21,14 +23,17 @@ public class PostService {
     private PostRepository postRepository;
     private UserService userService;
     private CommentService commentService;
+    private LikeService likeService;
 
     public PostService(
     		PostRepository postRepository
     		, UserService userService
-    		, CommentService commentService) {
+    		, CommentService commentService
+    		, LikeService likeService) {
         this.postRepository = postRepository;
         this.userService = userService;
         this.commentService = commentService;
+        this.likeService = likeService;
     }
 
     // 특정 소모임에 해당하는 사용자 게시글 리스트 가져오기
@@ -61,12 +66,16 @@ public class PostService {
     }
 
     // 게시글 작성하기
-    public Post addPost(int userId, int crewId, String title, String contents) {
-        Post post = Post.builder()
+    public Post addPost(int userId, int crewId, String title, String contents, MultipartFile file) {
+        
+    	String urlPath = FileManager.saveFile(userId, file);
+    	
+    	Post post = Post.builder()
                 .userId(userId)
                 .crewId(crewId)
                 .title(title)
                 .contents(contents)
+                .imagePath(urlPath)
                 .build();
 
         return postRepository.save(post);
@@ -74,14 +83,19 @@ public class PostService {
     
     
     // 게시글 수정하기
-    public Post editPost(int postId, int userId, String title, String contents) {
+    public Post editPost(int postId, int userId, String title, String contents, MultipartFile file) {
     	
     	Post post =  postRepository.findById(postId).orElse(null);
+    	
+    	String urlPath = FileManager.saveFile(userId, file);
+    	
+		FileManager.removeFile(post.getImagePath());
     	
     	if(post.getUserId() == userId) {
     		post.setTitle(title);
     		post.setContents(contents);
     		post.setUpdatedAt(LocalDateTime.now());
+    		post.setImagePath(urlPath);
     		postRepository.save(post);
     	} else {
     		return null;
@@ -98,6 +112,10 @@ public class PostService {
     	if(post != null) {
     		// 해당 게시글의 댓글 삭제
     		commentService.deleteCommentByPostId(postId);
+			likeService.deleteLikeByPostId(postId);
+
+			FileManager.removeFile(post.getImagePath());
+
     		// 게시글 삭제
     		postRepository.delete(post);
     		return true;
@@ -121,12 +139,15 @@ public class PostService {
     }
 
     // 게시글 ID로 게시글 조회
-    public PostView getPostView(int postId) {
+    public PostView getPostView(int postId, int logindId) {
     	
     	Post post =  postRepository.findById(postId).orElse(null);
 
        	User user = userService.getUserById(post.getUserId());
 
+       	int likeCount = likeService.getLikeCount(post.getId());
+       	boolean isLike = likeService.isLikeByPostIdAndUserId(postId, logindId);
+       	
         // 댓글 목록 가져오기
         List<CommentView> commentViewList = commentService.getCommentListByPostId(postId);
 
@@ -136,10 +157,13 @@ public class PostService {
                 .nickName(user.getNickName())
                 .title(post.getTitle())
                 .contents(post.getContents())
+                .imagePath(post.getImagePath())
                 .commentor(user.getNickName())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .commentList(commentViewList) // 댓글 추가
+                .likeCount(likeCount)
+                .isLike(isLike)
                 .build();
     }
 }

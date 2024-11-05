@@ -36,6 +36,9 @@ public class Crew {
 	private String title;
 	private String description;
 	
+	@Column(name="imagePath")
+	private String imagePath;
+	
 	@Column
 	@CreationTimestamp
 	private LocalDateTime createdAt;

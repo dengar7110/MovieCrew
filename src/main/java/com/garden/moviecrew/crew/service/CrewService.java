@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.garden.moviecrew.comment.service.CommentService;
+import com.garden.moviecrew.common.FileManager;
 import com.garden.moviecrew.crew.domain.Crew;
 import com.garden.moviecrew.crew.dto.CrewView;
 import com.garden.moviecrew.crew.repository.CrewRepository;
@@ -40,12 +41,15 @@ public class CrewService {
 	}
 	
 	// crew 생성
-	public Crew createCrew(int userId, String title, String description) {
+	public Crew createCrew(int userId, String title, String description, MultipartFile file) {
+		
+		String urlPath = FileManager.saveFile(userId, file);
 		
 		Crew crew = Crew.builder()
 					.userId(userId)
 					.title(title)
 					.description(description)
+					.imagePath(urlPath)
 					.build();
 		
 		Crew resultCrew = crewRepository.save(crew);
@@ -96,14 +100,20 @@ public class CrewService {
 	}
 	
 	// Crew 정보 수정하기
-	public Crew editCrewByCrewId(int crewId, String title, String description) {
+	public Crew editCrewByCrewId(int crewId, int userId, String title, String description, MultipartFile file) {
 		
 		 Crew crew = getCrewById(crewId);
+		 
+		 FileManager.removeFile(crew.getImagePath());
+		 
+		 String urlPath = FileManager.saveFile(userId, file);
 		 
 		 if(crew != null) {
 			 crew.setTitle(title);
 			 crew.setDescription(description);
+			 crew.setImagePath(urlPath);
 			 crew.setUpdatedAt(LocalDateTime.now());
+			 
 			 crewRepository.save(crew);
 		 } 
 		 

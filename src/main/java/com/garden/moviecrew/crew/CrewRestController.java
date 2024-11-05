@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.garden.moviecrew.crew.domain.Crew;
 import com.garden.moviecrew.crew.service.CrewService;
@@ -33,11 +33,12 @@ public class CrewRestController {
 	public Map<String, String> createCrew(
 			@RequestParam("title") String title
 			, @RequestParam("description") String description
+			, @RequestParam("imageFile") MultipartFile file
 			, HttpSession session) {
 		
 		int userId = (Integer)session.getAttribute("userId");
 		
-		Crew crew = crewService.createCrew(userId, title, description);
+		Crew crew = crewService.createCrew(userId, title, description, file);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		
@@ -55,10 +56,13 @@ public class CrewRestController {
 	public Map<String, String> editCrew(
 			@RequestParam("crewId") int crewId
 			, @RequestParam("title") String title
-			, @RequestParam("description") String description) {
+			, @RequestParam("description") String description
+			, @RequestParam("imageFile") MultipartFile file
+			, HttpSession session) {
 		
+		int userId = (Integer)session.getAttribute("userId");
 		
-		Crew crew = crewService.editCrewByCrewId(crewId, title, description);
+		Crew crew = crewService.editCrewByCrewId(crewId, userId, title, description, file);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		

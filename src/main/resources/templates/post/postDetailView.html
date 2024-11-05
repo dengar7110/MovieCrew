@@ -13,6 +13,7 @@
 				<h2 class="mb-3" th:text="${postView.title}" id="postTitle">게시글 제목</h2>
 				<input type="text" class="d-none form-control" id="postTitleInput" th:value="${postView.title}">
 				
+				
 				<!-- 작성자 및 작성일 -->
 				<p class="text-muted">
 				    <small><span th:text="|작성자: ${postView.nickName}"|>작성자명</span></small>
@@ -20,10 +21,22 @@
 				    <small>작성일: <span th:text="${#temporals.format(postView.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
 				</p>
 				
-				<!-- 게시글 내용 -->
+				<!-- 게시글 내용 및 좋아요 버튼 -->
 				<div id="post" th:data-post-id="${postView.postId}" class="card mb-5">
-				    <div class="card-body" th:text="${postView.contents}" id="postContents">더미 게시글 내용입니다.</div>
+				    <div class="card-body">
+				        <!-- 게시글 내용 -->
+				        <div id="postContents" th:text="${postView.contents}" class="mb-3">더미 게시글 내용입니다.</div>
+				    </div>
+				    
+				    <!-- 게시글 내용 수정용 -->
 				    <textarea class="d-none form-control" id="postContentsInput" rows="3" th:text="${postView.contents}"></textarea>
+				    
+				    <!-- 좋아요 버튼 -->
+				     <div class="d-flex justify-content-end align-items-center mr-3 mb-3">
+				        <i th:unless="${postView.isLike}" class="bi bi-heart text-danger h4 mb-0" id="likeBtn" th:data-post-id="${postView.postId}"></i>
+				        <i th:if="${postView.isLike}" class="bi bi-heart-fill text-danger h4 mb-0" id="unlikeBtn" th:data-post-id="${postView.postId}"></i>
+				        <span class="ml-2 h6 mb-0" th:text="|${postView.likeCount} 개|">1 개</span>
+				    </div>
 				</div>
 				
 				<!-- 게시글 수정 및 삭제 버튼 -->
@@ -97,6 +110,51 @@
 
 <script layout:fragment="script">
     $(document).ready(function() {
+    	
+    	$("#likeBtn").on("click", function() {
+    		
+    		let postId = $(this).data("post-id");
+    		
+    		$.ajax({
+    			type: "post"
+    			, url: "/post/like"
+    			, data: {"postId":postId}
+    			, success: function(data) {
+    				if(data.result == "success") {
+    					location.reload();
+    				} else {
+    					alert("좋아요 실패!!");
+    				}
+    			}
+    			, error: function() {
+					alert("좋아요 에러!");    				
+    			}
+    		});
+    		
+    	});
+    	
+    	$("#unlikeBtn").on("click", function() {
+			
+			let postId = $(this).data("post-id")
+			
+			$.ajax({
+				type: "delete"
+				, url: "/post/unlike"
+				, data: {"postId":postId}
+				, success: function(data) {
+					if(data.result == "success") {
+						location.reload();
+					} else {
+						alert("좋아요 취소 실패!!");
+					}
+				}
+				,error: function() {
+					alert("좋아요 취소 에러!");
+				}
+			});
+			
+		});
+    	
     	
     	// 게시글 삭제 버튼 클릭
     	$("#deletePostBtn").on("click", function() {

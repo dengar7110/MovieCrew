@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="like")
+@Table(name="`like`")
 @Entity
 public class Like {
 

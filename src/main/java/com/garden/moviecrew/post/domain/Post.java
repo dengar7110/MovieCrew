@@ -39,6 +39,9 @@ public class Post {
 	private String title;
 	private String contents;
 	
+	@Column(name="imagePath")
+	private String imagePath;
+	
 	@Column(name="createdAt")
 	@CreationTimestamp
 	private LocalDateTime createdAt;
