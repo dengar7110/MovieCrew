@@ -13,21 +13,18 @@
         <!-- 개설된 모임들 -->
         <div class="row">
             <!-- 반복적으로 표시할 카드 예시 -->
-            <div th:each="crew:${crewViewList}" class="col-4 mb-4">
-                <div class="card shadow">
-                    <img class="card-img-top" src="https://via.placeholder.com/350x150" alt="모임 이미지">
+            <div th:each="crew:${crewViewList}" class="col-md-4 mb-4">
+                <div class="card shadow-lg border-light rounded">
+					<img class="card-img-top w-100" th:src="${crew.imagePath != null ? crew.imagePath : 'https://via.placeholder.com/350x150'}" alt="모임 이미지" style="height: 200px; object-fit: cover;">
                     <div class="card-body">
-                    	<div class="d-flex justify-content-between">
-                        	<h5 th:text="${crew.title}">모임 제목</h5>
-                        	<h6 th:text=${crew.creator}>모임 개설자 닉네임</h6>
-                    	</div>
-                        <p th:text="${crew.description}">모임 설명을 여기에 적어주세요. 모임에 대한 간략한 정보를 제공합니다.</p>
-                        
+                       	<h2 th:text="${crew.title}" class="card-title font-weight-bold">모임 제목</h2>
+                		<h3 th:text="${crew.description}" class="text-muted">모임 설명을 여기에 적어주세요.</h3>
+                  		<h6 th:text="|모임장 : ${crew.creator}|" class="text-primary my-3">모임장</h6>
+                   			
                         <div class="d-flex justify-content-between align-items-center">
-                        
 						    <!-- 모임 관리 view 로 이동 -->
 						    <div th:if="${crew.userId == session.userId}">
-						        <a th:href="@{/membership/manage/{crewId}(crewId=${crew.crewId})}" class="btn btn-outline-primary btn-sm">모임 관리</a>
+						        <a th:href="@{/membership/manage/{crewId}(crewId=${crew.crewId})}" class="btn btn-primary btn-sm">모임 관리</a>
 						    </div>
 						        
 						    <div class="ml-auto">
@@ -43,7 +40,7 @@
 						        
 						        <!-- 가입 승인 보류상태 -->
 						        <div th:if="${crew.status == 'PENDING'}">
-						            <button class="btn btn-warning btn-sm" disabled>승인 대기중</button>
+						            <button class="btn btn-outline-warning btn-sm" disabled>승인 대기중</button>
 						        </div>
 						    </div>
 						    
@@ -60,38 +57,49 @@
     
     <!-- 신규 Crew 생성 MODAL -->
     <div class="modal fade" id="createCrewModal" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">신규 크루 만들기</h5>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="crewTitle">모임 제목</label>
-                        <input type="text" class="form-control" id="crewTitle" placeholder="제목을 입력하세요">
-                    </div>
-                    <div class="form-group">
-                        <label for="crewDescription">모임 설명</label>
-                        <textarea class="form-control" id="crewDescription" rows="3" placeholder="설명을 입력하세요"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="saveCrewBtn">생성하기</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-                </div>
-            </div>
-        </div>
-    </div>
+	    <div class="modal-dialog modal-dialog-centered">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title">신규 크루 만들기</h5>
+	                <button type="button" class="close" data-dismiss="modal">
+	                    <span>&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body">
+	                <div class="form-group">
+	                    <label for="crewTitle">모임 제목</label>
+	                    <input type="text" class="form-control" id="crewTitle" placeholder="모임 이름을 입력하세요">
+	                </div>
+	                <div class="form-group">
+	                    <label for="crewDescription">모임 설명</label>
+	                    <textarea class="form-control" id="crewDescription" rows="3" placeholder="모임 설명을 입력하세요"></textarea>
+	                </div>
+	
+	                <div class="form-group">
+	                    <div class="d-flex">
+	                        <input type="file" id="fileInput" class="form-control-file d-none">
+	                        <button type="button" class="btn btn-outline-secondary" id="imageBtn">모임 대표 사진</button>
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-success" id="saveCrewBtn">생성하기</button>
+	                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
     
 </section>
 
 <script layout:fragment="script">
 
     $(document).ready(function() {
-	
+		
+    	$("#imageBtn").on("click", function() {
+    		$("#fileInput").click();
+    	});
+    	
     	$(".joinReqeustCrewBtn").on("click", function() {
     		
     		let crewId = $(this).data("crew-id");
@@ -121,21 +129,31 @@
         
         // 모임 저장 버튼 클릭 시 AJAX 요청
         $("#saveCrewBtn").on("click", function() {
+        	
             let title = $("#crewTitle").val();
             let description = $("#crewDescription").val();
+            let file = $("#fileInput")[0].files[0];
             
             if (!title || !description) {
                 alert("모임제목과 모임설명을 입력해주세요.");
                 return;
             }
             
+            let formData = new FormData();
+            formData.append("title", title);
+            formData.append("description", description);
+            formData.append("imageFile", file);
+            
             $.ajax({
                 type: "post"
                 , url: "/crew/createCrew"
-                , data: {"title": title, "description": description}
+                , data: formData
+                , enctype: "multipart/form-data"
+                , processData: false
+                , contentType: false
             	, success: function(data) {
                     if (data.result == "success") {
-                        location.href = "/crew/crew-view";
+                        location.reload();
                     } else {
                         alert("크루 생성 실패!");
                     }
@@ -144,7 +162,9 @@
                     alert("크루 생성 에러!");
                 }
             });
+            
         });
+        
     });
 </script>
 </html>

@@ -90,6 +90,12 @@
 	                    <label for="editDescription">모임 설명</label>
 	                    <textarea class="form-control" id="editDescriptionInput" rows="4" th:text="${crew.description}" placeholder="설명을 입력하세요"></textarea>
 	                </div>
+	                <div class="form-group">
+	                    <div class="d-flex">
+	                        <input type="file" id="fileInput" class="form-control-file d-none">
+	                        <button type="button" class="btn btn-outline-secondary" id="imageBtn">크루 대표 사진</button>
+	                    </div>
+	                </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="editCrewBtn" th:data-crew-id="${crew.Id}">수정하기</button>
@@ -126,6 +132,10 @@
 
 	$(document).ready(function() {
 		
+		$("#imageBtn").on("click", function() {
+    		$("#fileInput").click();
+    	});
+		
 		$("#deleteCrewBtn").on("click", function() {
 			
 			let crewId = $(this).data("crew-id");
@@ -155,12 +165,27 @@
 			
 			let crewId = $(this).data("crew-id");
 			let title = $("#editTitleInput").val();
-			let description = $("#editDescriptionInput").val(); 
-			
+			let description = $("#editDescriptionInput").val();
+            let file = $("#fileInput")[0].files[0];
+            
+            if (!title || !description) {
+                alert("모임제목과 모임설명을 입력해주세요.");
+                return;
+            }
+            
+            let formData = new FormData();
+            formData.append("crewId", crewId);
+            formData.append("title", title);
+            formData.append("description", description);
+            formData.append("imageFile", file);
+            
 			$.ajax({
 				type: "put"
 				, url: "/crew/editCrew"
-				, data: {"crewId":crewId, "title":title, "description":description}
+				, data: formData
+                , enctype: "multipart/form-data"
+                , processData: false
+                , contentType: false
 				, success: function(data) {
 					if(data.result == "success") {
 						location.reload();				

@@ -35,7 +35,6 @@ public class FileManager {
 			byte[] bytes = file.getBytes();
 			Path path =  Paths.get(filePath);
 			Files.write(path, bytes);
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

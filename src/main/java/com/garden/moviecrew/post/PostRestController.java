@@ -29,11 +29,11 @@ public class PostRestController {
     // 게시글 작성하기
     @PostMapping("/createPost") 
     public Map<String, String> createPost(
-            @RequestParam("title") String title
+    		@RequestParam("crewId") int crewId
+    		, @RequestParam("title") String title
             , @RequestParam("contents") String contents
-    		, @RequestParam("imageFile") MultipartFile file
-            , @RequestParam("crewId") int crewId,
-            HttpSession session) {
+    		, @RequestParam(value="imageFile", required = false) MultipartFile file
+            , HttpSession session) {
         
         int userId = (Integer) session.getAttribute("userId");
 

@@ -36,34 +36,6 @@ public class PostService {
         this.likeService = likeService;
     }
 
-    // 특정 소모임에 해당하는 사용자 게시글 리스트 가져오기
-    public List<PostView> getPostViewListByCrewId(int crewId) {
-       
-    	List<Post> postList = postRepository.findByCrewId(crewId);
-    	
-    	List<PostView> postViewList = new ArrayList<>();
-    	
-    	for(Post post:postList) {
-    		
-    		User user = userService.getUserById(post.getUserId());
-    		
-    		PostView postView = PostView.builder()
-					    				.postId(post.getId())
-					    				.userId(post.getUserId())
-					    				.title(post.getTitle())
-					    				.contents(post.getContents())
-					    				.createdAt(post.getCreatedAt())
-					    				.updatedAt(post.getUpdatedAt())
-					    				.nickName(user.getNickName())
-					    				.build();
-    				
-    		postViewList.add(postView);
-    		
-    	}
-    			
-    	
-    	return postViewList;
-    }
 
     // 게시글 작성하기
     public Post addPost(int userId, int crewId, String title, String contents, MultipartFile file) {
@@ -104,7 +76,7 @@ public class PostService {
     	return post;
     }
     
-    // 단일 게시글 삭제하기
+    // 게시글 삭제하기
     public boolean deletePost(int postId, int userId) {
     	
     	Post post =  postRepository.findByIdAndUserId(postId, userId).orElse(null);
@@ -137,8 +109,38 @@ public class PostService {
         }
     	postRepository.deleteByCrewId(crewId);
     }
-
-    // 게시글 ID로 게시글 조회
+    
+    // crewId 로 모임의 모든 게시글 리스트 가져오기
+    public List<PostView> getPostViewListByCrewId(int crewId) {
+    	
+    	List<Post> postList = postRepository.findByCrewId(crewId);
+    	
+    	List<PostView> postViewList = new ArrayList<>();
+    	
+    	for(Post post:postList) {
+    		
+    		User user = userService.getUserById(post.getUserId());
+    		
+    		PostView postView = PostView.builder()
+    				.postId(post.getId())
+    				.userId(post.getUserId())
+    				.title(post.getTitle())
+    				.contents(post.getContents())
+    				.imagePath(post.getImagePath())
+    				.createdAt(post.getCreatedAt())
+    				.updatedAt(post.getUpdatedAt())
+    				.nickName(user.getNickName())
+    				.build();
+    		
+    		postViewList.add(postView);
+    		
+    	}
+    	
+    	
+    	return postViewList;
+    }
+    
+    // 게시글 ID 로 게시글 상세정보 조회
     public PostView getPostView(int postId, int logindId) {
     	
     	Post post =  postRepository.findById(postId).orElse(null);
@@ -166,4 +168,5 @@ public class PostService {
                 .isLike(isLike)
                 .build();
     }
+    
 }

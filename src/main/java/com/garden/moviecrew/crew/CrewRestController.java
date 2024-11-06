@@ -33,7 +33,7 @@ public class CrewRestController {
 	public Map<String, String> createCrew(
 			@RequestParam("title") String title
 			, @RequestParam("description") String description
-			, @RequestParam("imageFile") MultipartFile file
+			, @RequestParam(value = "imageFile", required = false) MultipartFile file
 			, HttpSession session) {
 		
 		int userId = (Integer)session.getAttribute("userId");
@@ -57,7 +57,7 @@ public class CrewRestController {
 			@RequestParam("crewId") int crewId
 			, @RequestParam("title") String title
 			, @RequestParam("description") String description
-			, @RequestParam("imageFile") MultipartFile file
+			, @RequestParam(value = "imageFile", required = false) MultipartFile file
 			, HttpSession session) {
 		
 		int userId = (Integer)session.getAttribute("userId");

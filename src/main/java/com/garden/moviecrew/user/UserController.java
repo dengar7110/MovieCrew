@@ -5,15 +5,12 @@ import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.garden.moviecrew.user.domain.User;
 import com.garden.moviecrew.user.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
-
-
 
 @Controller
 @RequestMapping("/user")
@@ -49,7 +46,6 @@ public class UserController {
 				
 		model.addAttribute("user", user);
 		model.addAttribute("formattedBirthday", formattedBirthday);
-		
 		
 		return "user/editView";
 	}

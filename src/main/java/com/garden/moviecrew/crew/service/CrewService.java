@@ -83,6 +83,7 @@ public class CrewService {
                     .userId(creator.getId())
                     .title(crew.getTitle())
                     .description(crew.getDescription())
+                    .imagePath(crew.getImagePath())
                     .createdAt(crew.getCreatedAt())
                     .status(membership != null ? membership.getStatus().name() : null)
                     .creator(creator != null ? creator.getNickName() : null)
