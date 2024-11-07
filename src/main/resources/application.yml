@@ -20,5 +20,5 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   movie:
     api:
-      url: https://api.themoviedb.org/3/movie/top_rated
+      url: https://api.themoviedb.org/3
       key: 00d39ce433d4e05bacd8d3b68be6ef40

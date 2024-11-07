@@ -19,6 +19,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     // crewId 로 게시글 리스트 조회
     public List<Post> findByCrewId(int crewId);
     
+    // crewId 로 게시글 리스트 생성일순으로 조회
+    public List<Post> findByCrewIdOrderByCreatedAtDesc(int crewId);
+    
     // postId 와 userId 가 일치하는 게시물
     public Optional<Post> findByIdAndUserId(int id, int userId);
     

@@ -5,111 +5,135 @@
 
 <section layout:fragment="contents">
     <div class="container mt-5">
-        <!-- 게시글 상세 -->
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-            
-				<!-- 게시글 제목 -->
-				<h2 class="mb-3" th:text="${postView.title}" id="postTitle">게시글 제목</h2>
-				<input type="text" class="d-none form-control" id="postTitleInput" th:value="${postView.title}">
-				
-				
-				<!-- 작성자 및 작성일 -->
-				<p class="text-muted">
-				    <small><span th:text="|작성자: ${postView.nickName}"|>작성자명</span></small>
-				    <span class="mx-2">|</span>
-				    <small>작성일: <span th:text="${#temporals.format(postView.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
-				</p>
-				
-				<!-- 게시글 내용 및 좋아요 버튼 -->
-				<div id="post" th:data-post-id="${postView.postId}" class="card mb-5">
-				    <div class="card-body">
-				        <!-- 게시글 내용 -->
-				        <div id="postContents" th:text="${postView.contents}" class="mb-3">더미 게시글 내용입니다.</div>
-				    </div>
-				    
-				    <!-- 게시글 내용 수정용 -->
-				    <textarea class="d-none form-control" id="postContentsInput" rows="3" th:text="${postView.contents}"></textarea>
-				    
-				    <!-- 좋아요 버튼 -->
-				     <div class="d-flex justify-content-end align-items-center mr-3 mb-3">
-				        <i th:unless="${postView.isLike}" class="bi bi-heart text-danger h4 mb-0" id="likeBtn" th:data-post-id="${postView.postId}"></i>
-				        <i th:if="${postView.isLike}" class="bi bi-heart-fill text-danger h4 mb-0" id="unlikeBtn" th:data-post-id="${postView.postId}"></i>
-				        <span class="ml-2 h6 mb-0" th:text="|${postView.likeCount} 개|">1 개</span>
-				    </div>
+	    <div class="col-md-8 offset-md-2">
+	        
+	        <!-- 게시글 제목 및 작성자 -->
+	        <div class="card shadow-sm mb-4">
+	        
+			    <!-- 카드 헤더 -->
+			    <div class="card-header d-flex justify-content-between align-items-center">
+					<h2>
+						<a th:text="${crew.title}" th:href="@{/post/postlist/{crewId}(crewId=${crew.id})}" class="text-dark text-decoration-none"></a>
+					</h2>
 				</div>
-				
-				<!-- 게시글 수정 및 삭제 버튼 -->
-				<div class="mb-4" th:if="${nowLoginUserId == postView.userId}">
-				    <div class="d-flex justify-content-between align-items-center mb-2">
-				        <small class="text-muted">게시글 관리</small>
-				        <div>
-				            <button type="button" class="btn btn-success btn-sm mx-1" th:data-post-id="${postView.postId}" id="editPostBtn">
-				                  <i class="bi bi-pencil">수정</i>
-				            </button>
-				            
-					        <button type="button" class="btn btn-success btn-sm mx-1 d-none" th:data-post-id="${postView.postId}" id="savePostBtn">
-					        	<i class="bi bi-save">저장</i>
-					        </button>
-				            
-				            <button type="button" class="btn btn-danger btn-sm mx-1" th:data-post-id="${postView.postId}" id="deletePostBtn">
-				                <i class="bi bi-trash">삭제</i>
-				            </button>
-				        </div>
-				    </div>
-				    <hr class="mt-2">
-				</div>
-                
-                <!-- 댓글 섹션 -->
-                <div class="mt-5">
-                    <h5>댓글</h5> 	
-                    <!-- 댓글 작성 -->
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <textarea id="commentInput" class="form-control" rows="3" placeholder="댓글을 입력하세요"></textarea>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                           		<button type="button" class="btn btn-primary" id="commentBtn" th:data-post-id="${postView.postId}">댓글 작성</button>
-                            </div>
-                        </div>
+			
+			    <!-- 카드 본문: 제목 내용 작성자 작성일 -->
+			    <div class="card-body">
+			        <h3 class="mb-0 pt-3 pl-3" th:text="${postView.title}" id="postTitle">게시글 제목</h3>
+			        <div class="pt-3 pl-3">
+			    		<input type="text" class="d-none form-control" id="postTitleInput" th:value="${postView.title}">
+			        </div>
+ 		            <img class="border-radious w-100 p-3" th:src="${postView.imagePath}">
+			        <h4  class="card-text my-2 p-3" id="postContents" th:text="${postView.contents}">더미 게시글 내용입니다.</h4>
+			        <div class="p-3">
+			        	<textarea class="d-none form-control p-3" id="postContentsInput" rows="3" th:text="${postView.contents}"></textarea>
+			        </div>
+			    	<div class="d-flex mt-2">
+                        <input type="file" id="fileInput" class="form-control-file d-none">
+                        <button type="button" class="btn btn-outline-success d-none" id="imageBtn">사진 수정하기</button>
                     </div>
-                    <!-- 기존 댓글 목록 -->
-					<div th:each="comment:${commentViewList}" class="card mb-3 shadow-sm">
-					    <div class="card-body">
-					        <!-- 댓글 내용 -->
-					        <p th:id="|commentContents${comment.commentId}|" th:text="${comment.contents}" class="mb-2">더미 댓글 내용입니다.</p>
-						
-							<input type="text" th:id="|commentInput${comment.commentId}|" class="form-control mb-2 d-none" th:value="${comment.contents}">
-						
-					        <!-- 작성자 및 작성일 정보 -->
-					        <div class="d-flex justify-content-between align-items-center text-muted mb-0">
-					            <small>작성자: <span th:text="${comment.nickName}">작성자명</span></small>
-					            <small>작성일: <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd')}">2024-10-10</span></small>
-					        </div>
-					
-					        <!-- 수정 및 삭제 버튼 -->
-					        <div class="d-flex justify-content-end mt-3" th:if="${nowLoginUserId == comment.userId}">
-					            <button th:id="|editCommentBtn${comment.commentId}|" type="button" class="btn btn-outline-success btn-sm mx-2 editCommentBtn" th:data-comment-id="${comment.commentId}">
-					            	<i class="bi bi-pencil">수정</i>
-					            </button>
-					            <button th:id="|saveCommentBtn${comment.commentId}|" type="button" class="btn btn-outline-success btn-sm saveCommentBtn d-none" th:data-comment-id="${comment.commentId}">
-         					    	<i class="bi bi-save">저장</i>
-					            </button>
-					            <button th:id="|commentDeleteBtn${comment.commentId}|" type="button" class="btn btn-outline-danger btn-sm deleteCommentBtn" th:data-comment-id="${comment.commentId}">
-					            	<i class="bi bi-trash">삭제</i>
-					            </button>
-					        </div>
-					    </div>
-					</div>
-                </div>
-            </div>
-        </div>
-    </div>
+		       		<div class="text-muted" th:text="|작성자: ${postView.nickName}|">작성자명</div>
+			        <div class="text-muted" th:text="|작성일: ${#temporals.format(postView.createdAt, 'yyyy-MM-dd')}|">2024-10-10</div>
+			    </div>
+			
+			    <!-- 카드 푸터: 좋아요 및 관리 버튼 -->
+			    <div class="card-footer bg-light d-flex justify-content-between align-items-center">
+			        <!-- 좋아요 버튼 -->
+			        <div class="d-flex align-items-center">
+			            <i th:if="${postView.isLike}" class="bi bi-heart-fill text-danger h4 mb-0" id="unlikeBtn" th:data-post-id="${postView.postId}"></i>
+			            <i th:unless="${postView.isLike}" class="bi bi-heart text-danger h4 mb-0" id="likeBtn" th:data-post-id="${postView.postId}"></i>
+			            <span class="ml-2 h6 mb-0" th:text="|${postView.likeCount} 개|">1 개</span>
+			        </div>
+			        
+			        <!-- 수정 및 삭제 버튼 -->
+			        <div th:if="${nowLoginUserId == postView.userId}" class="d-flex">
+			            <button type="button" class="btn btn-outline-success btn-sm mx-1" th:data-post-id="${postView.postId}" id="editPostBtn">
+			                <i class="bi bi-pencil"></i> 수정
+			            </button>
+			            <button type="button" class="btn btn-outline-primary btn-sm mx-1 d-none" th:data-post-id="${postView.postId}" id="savePostBtn">
+			                <i class="bi bi-save"></i> 저장
+			            </button>
+			            <button type="button" class="btn btn-outline-danger btn-sm mx-1" data-toggle="modal" data-target="#deletePostModal">
+			                <i class="bi bi-trash"></i> 삭제
+			            </button>
+			        </div>
+			    </div>
+			</div>
+	        
+	        
+	        
+	        <!-- 댓글 섹션 -->
+	        <div class="card mb-4">
+	            <div class="card-header bg-light">
+	                <h5 class="mb-0">댓글</h5>
+	            </div>
+	            
+	            <!-- 댓글 작성 -->
+	            <div class="card-body">
+	                <textarea id="commentInput" class="form-control mb-2" rows="3" placeholder="댓글을 입력하세요"></textarea>
+	                <div class="text-right">
+	                    <button type="button" class="btn btn-primary" id="commentBtn" th:data-post-id="${postView.postId}">댓글 쓰기</button>
+	                </div>
+	            </div>
+	            
+	            <!-- 기존 댓글 목록 -->
+	            <div th:each="comment:${commentViewList}" class="list-group list-group-flush">
+	                <div class="list-group-item">
+	                    <div class="d-flex justify-content-between align-items-center">
+	                        <div>
+	                            <span class="font-weight-bold" th:text="${comment.nickName}">작성자명</span>
+	                        </div>
+	                        <div th:if="${nowLoginUserId == comment.userId}">
+	                            <button th:id="|editCommentBtn${comment.commentId}|" type="button" class="btn btn-outline-success btn-sm mx-1 editCommentBtn" th:data-comment-id="${comment.commentId}">
+	                                <i class="bi bi-pencil"></i> 수정
+	                            </button>
+	                            <button th:id="|saveCommentBtn${comment.commentId}|" type="button" class="btn btn-outline-success btn-sm saveCommentBtn d-none" th:data-comment-id="${comment.commentId}">
+	                                <i class="bi bi-save"></i> 저장
+	                            </button>
+	                            <button th:id="|commentDeleteBtn${comment.commentId}|" type="button" class="btn btn-outline-danger btn-sm deleteCommentBtn" th:data-comment-id="${comment.commentId}">
+	                                <i class="bi bi-trash"></i> 삭제
+	                            </button>
+	                        </div>
+	                    </div>
+	                    <p th:id="|commentContents${comment.commentId}|" th:text="${comment.contents}" class="mb-1">더미 댓글 내용입니다.</p>
+	                    <input type="text" th:id="|commentInput${comment.commentId}|" class="form-control mb-2 d-none" th:value="${comment.contents}">
+                    	<small class="text-muted" th:text="|작성일: ${#temporals.format(comment.createdAt, 'yyyy-MM-dd')}|">2024-10-10</small>
+	                </div>
+	            </div>
+	            
+	        </div>
+	    </div>
+	</div>
+	
+	<!-- 게시글 삭제 확인 모달 -->
+	<div class="modal fade" id="deletePostModal">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title">게시글 삭제</h5>
+	                <button type="button" class="close" data-dismiss="modal">
+	                    <span>&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body">
+	                <p>정말로 이 게시글을 삭제하시겠습니까?</p>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-danger" id="deletePostBtn" th:data-post-id="${postView.postId}" th:data-crew-id="${postView.crewId}">삭제</button>
+	                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	
 </section>
 
 <script layout:fragment="script">
     $(document).ready(function() {
+    	
+    	$("#imageBtn").on("click", function() {
+    		$("#fileInput").click();
+    	});
     	
     	$("#likeBtn").on("click", function() {
     		
@@ -160,17 +184,15 @@
     	$("#deletePostBtn").on("click", function() {
     		
     		let postId = $(this).data("post-id");
+    	    let crewId = $(this).data("crew-id");
     		
-    	    let urlParams = new URLSearchParams(window.location.search);
-    	    let crewId = urlParams.get('crewId');
-
     		$.ajax({
     			type: "delete"
     			, url: "/post/deletePost"
     			, data:{"postId":postId}
     			, success:function(data) {
     				if(data.result == "success") {
-    	                location.href = "/post/postList/" + crewId;
+    	                location.href = "/post/postlist/" + crewId;
     				} else{
     					alert("게시글 삭제 실패!");
     				}
@@ -183,17 +205,33 @@
     	});
     	
     	
-    	// 게시글 저장 버튼 클릭
+    	// 게시글 수정시 저장 버튼 클릭
     	$("#savePostBtn").on("click", function() {
     		
     		let postId = $(this).data("post-id");
     		let title = $("#postTitleInput").val();
     		let contents = $("#postContentsInput").val();
+    		let file = $("#fileInput")[0].files[0];
 
+    	    let formData = new FormData();
+            formData.append("postId", postId);
+            formData.append("title", title);
+            formData.append("contents", contents);
+            
+            if(file) {
+	            formData.append("imageFile", file);
+            }
+            
+    	    
+            $("#imageBtn").addClass("d-none");
+            
     		$.ajax({
     			type: "put"
     			, url: "/post/editPost"
-    			, data: {"postId":postId, "contents":contents, "title":title}
+    			, data: formData
+    			, enctype: "multipart/form-data"
+    			, processData: false
+    			, contentType: false
     			, success:function(data) {
     				if(data.result == "success") {
     	                location.reload();
@@ -219,6 +257,7 @@
     	    // 제목, 내용 인풋창 활성화
     	    $("#postTitleInput").removeClass("d-none");
     	    $("#postContentsInput").removeClass("d-none");
+    	    $("#imageBtn").removeClass("d-none");
 
     	    // 수정 버튼 숨기고 저장 버튼 표시
     	    $(this).addClass("d-none"); // 수정 버튼 숨김
@@ -299,11 +338,9 @@
         			alert("댓글 수정 에러!");
         		}
         		
-        		
         	});
         	
         });
-        
     	
         // 댓글 작성 버튼 클릭 시
         $("#commentBtn").on("click", function() {

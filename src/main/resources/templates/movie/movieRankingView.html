@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<section layout:fragment="contents">
+
+    <div class="container mt-4">
+    
+        <h1 class="text-center mb-4">최신 영화 순위</h1>
+        
+        <div class="row">
+            <!-- 영화 카드들 -->
+            <th:block th:each="movie : ${movieList}">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <!-- 영화 포스터 이미지 -->
+                        <img th:src="'https://image.tmdb.org/t/p/w500/' + ${movie.posterPath}" class="card-img-top" alt="영화 포스터" style="width: 100%; height: 500px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="font-weight-bold" th:text="${movie.title}"></h5>
+
+                            <!-- 설명 버튼과 설명 텍스트 -->
+                            <button class="btn btn-primary btn-sm mt-2 mb-3 toggleOverviewBtn" type="button">설명 보기</button>
+                            <p class="d-none movieOverview" th:text="${movie.overview != null ? movie.overview : '영화 설명이 없습니다.'}"></p>
+                            <p class="text-muted">개봉일: <span th:text="${movie.releaseDate}"></span></p>
+                            <p class="text-muted">평점: <span th:text="${movie.voteAverage}"></span></p>
+                            <div class="p-1">
+                                <span class="badge badge-primary" th:text="${#lists.isEmpty(movie.genres) ? '장르 정보 없음' : movie.genres[0]}"></span>
+                                <span class="badge badge-primary" th:text="${#lists.isEmpty(movie.genres) ? '장르 정보 없음' : movie.genres[1]}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+            
+        </div>
+    </div>
+
+</section>
+<script layout:fragment="script">
+	
+	$(document).ready(function() {
+		
+		$(".toggleOverviewBtn").on("click", function() {
+            let overviewBtn = $(this);
+            let movieOverview = $(this).next(".movieOverview");
+            
+            movieOverview.toggleClass("d-none"); // d-none 클래스 추가/제거
+            
+            // 버튼 텍스트 변경
+            if (movieOverview.hasClass("d-none")) {
+                $(this).text("설명 보기");
+            } else {
+                $(this).text("설명 닫기");
+            }
+        });
+    });
+
+</script>
+</html>

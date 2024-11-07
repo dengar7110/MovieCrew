@@ -56,24 +56,27 @@ public class PostService {
     
     // 게시글 수정하기
     public Post editPost(int postId, int userId, String title, String contents, MultipartFile file) {
-    	
-    	Post post =  postRepository.findById(postId).orElse(null);
-    	
-    	String urlPath = FileManager.saveFile(userId, file);
-    	
-		FileManager.removeFile(post.getImagePath());
-    	
-    	if(post.getUserId() == userId) {
-    		post.setTitle(title);
-    		post.setContents(contents);
-    		post.setUpdatedAt(LocalDateTime.now());
-    		post.setImagePath(urlPath);
-    		postRepository.save(post);
-    	} else {
-    		return null;
-    	}
-    	
-    	return post;
+        
+        // 게시글 조회
+        Post post = postRepository.findById(postId).orElse(null);
+
+        // 기존 이미지 파일 삭제
+        if (file != null && !file.isEmpty()) {
+            if (post.getImagePath() != null) {
+                FileManager.removeFile(post.getImagePath());
+            }
+            String urlPath = FileManager.saveFile(userId, file);
+            post.setImagePath(urlPath); // 새로운 이미지 경로 설정
+        }
+
+        // 게시글 정보 수정
+        post.setTitle(title);
+        post.setContents(contents);
+        post.setUpdatedAt(LocalDateTime.now());
+        
+        postRepository.save(post);
+
+        return post;
     }
     
     // 게시글 삭제하기
@@ -85,7 +88,7 @@ public class PostService {
     		// 해당 게시글의 댓글 삭제
     		commentService.deleteCommentByPostId(postId);
 			likeService.deleteLikeByPostId(postId);
-
+			
 			FileManager.removeFile(post.getImagePath());
 
     		// 게시글 삭제
@@ -111,9 +114,9 @@ public class PostService {
     }
     
     // crewId 로 모임의 모든 게시글 리스트 가져오기
-    public List<PostView> getPostViewListByCrewId(int crewId) {
+    public List<PostView> getPostViewListByCrewIdOrderByCreatedAtDesc(int crewId) {
     	
-    	List<Post> postList = postRepository.findByCrewId(crewId);
+    	List<Post> postList = postRepository.findByCrewIdOrderByCreatedAtDesc(crewId);
     	
     	List<PostView> postViewList = new ArrayList<>();
     	
@@ -121,15 +124,18 @@ public class PostService {
     		
     		User user = userService.getUserById(post.getUserId());
     		
+    		int likeCount = likeService.getLikeCount(post.getId());
+    		
     		PostView postView = PostView.builder()
     				.postId(post.getId())
     				.userId(post.getUserId())
     				.title(post.getTitle())
     				.contents(post.getContents())
+    				.nickName(user.getNickName())
     				.imagePath(post.getImagePath())
+    				.likeCount(likeCount)
     				.createdAt(post.getCreatedAt())
     				.updatedAt(post.getUpdatedAt())
-    				.nickName(user.getNickName())
     				.build();
     		
     		postViewList.add(postView);
@@ -151,22 +157,25 @@ public class PostService {
        	boolean isLike = likeService.isLikeByPostIdAndUserId(postId, logindId);
        	
         // 댓글 목록 가져오기
-        List<CommentView> commentViewList = commentService.getCommentListByPostId(postId);
+        List<CommentView> commentViewList = commentService.getCommentListByPostIdOrderByCreatedAtDesc(postId);
 
-        return PostView.builder()
-                .postId(post.getId())
-                .userId(user.getId())
-                .nickName(user.getNickName())
-                .title(post.getTitle())
-                .contents(post.getContents())
-                .imagePath(post.getImagePath())
-                .commentor(user.getNickName())
-                .createdAt(post.getCreatedAt())
-                .updatedAt(post.getUpdatedAt())
-                .commentList(commentViewList) // 댓글 추가
-                .likeCount(likeCount)
-                .isLike(isLike)
-                .build();
+        PostView postView = PostView.builder()
+			                .postId(post.getId())
+			                .crewId(post.getCrewId())
+			                .userId(user.getId())
+			                .nickName(user.getNickName())
+			                .title(post.getTitle())
+			                .contents(post.getContents())
+			                .imagePath(post.getImagePath())
+			                .commentor(user.getNickName())
+			                .createdAt(post.getCreatedAt())
+			                .updatedAt(post.getUpdatedAt())
+			                .commentList(commentViewList) // 댓글 추가
+			                .likeCount(likeCount)
+			                .isLike(isLike)
+			                .build();
+        
+        return postView;
     }
     
 }

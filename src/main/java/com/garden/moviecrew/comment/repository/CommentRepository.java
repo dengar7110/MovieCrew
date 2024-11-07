@@ -12,7 +12,7 @@ import jakarta.transaction.Transactional;
 public interface CommentRepository extends JpaRepository<Comment, Integer>{
 	
 	// postId 게시글에 해당하는 전체 댓글 리스트 조회 
-    public List<Comment> findByPostId(int postId);
+    public List<Comment> findByPostIdOrderByCreatedAtDesc(int postId);
 	
     // commentId 로 특정 댓글 조회
     public Optional<Comment> findById(int id);

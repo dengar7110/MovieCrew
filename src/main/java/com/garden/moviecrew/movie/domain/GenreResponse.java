@@ -7,8 +7,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MovieResponse {
+public class GenreResponse {
 
-	private List<Movie> results;  // 영화 리스트
-
+	private List<Genre> genres;
+	
 }

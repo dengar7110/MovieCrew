@@ -56,7 +56,7 @@ public class PostRestController {
     		@RequestParam("postId") int postId
     		, @RequestParam("title") String title
     		, @RequestParam("contents") String contents
-    		, @RequestParam("imageFile") MultipartFile file
+    		, @RequestParam(value = "imageFile", required = false) MultipartFile file
     		, HttpSession session) {
     	
     	int userId = (Integer)session.getAttribute("userId");

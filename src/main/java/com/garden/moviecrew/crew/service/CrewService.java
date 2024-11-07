@@ -66,7 +66,7 @@ public class CrewService {
 	// CrewView 리스트 조회
     public List<CrewView> getCrewViewList(int userId) {
     	
-    	List<Crew> crewList = crewRepository.findAll();
+    	List<Crew> crewList = crewRepository.findAllByOrderByCreatedAtDesc();
     	
     	List<CrewView> crewViewList = new ArrayList<>();
     	

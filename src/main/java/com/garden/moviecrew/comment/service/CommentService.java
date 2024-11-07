@@ -39,9 +39,9 @@ public class CommentService {
 
 	
 	// 특정 게시글에 달린 댓글 목록 조회
-    public List<CommentView> getCommentListByPostId(int postId) {
+    public List<CommentView> getCommentListByPostIdOrderByCreatedAtDesc(int postId) {
     	
-    	List<Comment> commentList = commentRepository.findByPostId(postId);
+    	List<Comment> commentList = commentRepository.findByPostIdOrderByCreatedAtDesc(postId);
     	
     	List<CommentView> commentViewList = new ArrayList<>();
     	

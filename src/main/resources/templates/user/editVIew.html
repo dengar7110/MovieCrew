@@ -17,7 +17,12 @@
             <!-- 비밀번호 변경 -->
             <div class="form-group">
                 <label for="password">비밀번호 변경</label>
-                <input type="password" id="passwordInput" placeholder="새 비밀번호를 입력해주세요" class="form-control">
+                <div class="input-group">
+	                <input type="password" id="passwordInput" placeholder="새 비밀번호를 입력해주세요" class="form-control">
+	                <div class="input-group-append">
+		            	<button type="button" class="btn btn-outline-secondary" id="togglePassword">보기</button>
+		            </div>
+		        </div>    
             </div>
 
             <!-- 이름 수정 -->
@@ -49,18 +54,18 @@
                 <label>성별</label>
                 <div class="d-flex">
                     <div class="form-check form-check-inline mr-3">
-                        <input class="form-check-input" type="radio" name="gender" value="male" th:checked="${user.gender == 'male'}">
+                        <input class="form-check-input" type="radio" name="gender" value="male" th:checked="${user.gender == 'male'}" disabled>
                         <label class="form-check-label" for="male">남성</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" value="female" th:checked="${user.gender == 'female'}">
+                        <input class="form-check-input" type="radio" name="gender" value="female" th:checked="${user.gender == 'female'}" disabled>
                         <label class="form-check-label" for="female">여성</label>
                     </div>
                 </div>
             </div>
 
             <!-- 저장 버튼 -->
-            <button type="button" class="btn btn-success btn-block mt-4" id="saveBtn">저장하기</button>
+            <button type="button" class="btn btn-primary btn-block btn-lg mt-4" id="saveBtn">저장하기</button>
         </div>
     </div>
 </section>
@@ -95,6 +100,22 @@
 			});
 			
 		});
+		
+		
+		// 비밀번호 토글 버튼 보기, 숨기기
+	    $("#togglePassword").on("click", function() {
+	        let password = $("#passwordInput");
+	        let type = password.attr("type");
+
+	        if(type == "password") {
+	        	password.attr("type", "text");
+	        	$(this).text("숨기기");
+	        } else {
+	        	password.attr("type", "password");
+	        	$(this).text("보기");
+	        }
+	        
+	    });
 		
 		
 	});

@@ -30,13 +30,13 @@ public class UserRestController {
     // 회원가입 API
     @PostMapping("/join")
     public Map<String, String> join(
-            @RequestParam("loginId") String loginId,
-            @RequestParam("password") String password,
-            @RequestParam("name") String name,
-            @RequestParam("nickName") String nickName,
-            @RequestParam("birthday") String birthday,
-            @RequestParam("email") String email,
-            @RequestParam("gender") String gender) {
+            @RequestParam("loginId") String loginId
+            , @RequestParam("password") String password
+            , @RequestParam("name") String name
+            , @RequestParam("nickName") String nickName
+            , @RequestParam("birthday") String birthday
+            , @RequestParam("email") String email
+            , @RequestParam("gender") String gender) {
 
         LocalDate birthdayDate = null;
         if (birthday != null && !birthday.isEmpty()) {
@@ -71,9 +71,9 @@ public class UserRestController {
     // 로그인 API
     @PostMapping("/login")
     public Map<String, String> login(
-            @RequestParam("loginId") String loginId,
-            @RequestParam("password") String password,
-            HttpSession session) {
+            @RequestParam("loginId") String loginId
+            , @RequestParam("password") String password
+            , HttpSession session) {
 
         User user = userService.login(loginId, password);
         Map<String, String> resultMap = new HashMap<>();
@@ -92,13 +92,13 @@ public class UserRestController {
     // 개인정보 수정 API
     @PutMapping("/edit")
     public Map<String, String> edit(
-            @RequestParam(value = "password", required = false) String password,
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "nickName", required = false) String nickName,
-            @RequestParam(value = "birthday", required = false) String birthday,
-            @RequestParam(value = "email", required = false) String email,
-            @RequestParam(value = "gender", required = false) String gender,
-            HttpSession session) {
+            @RequestParam(value = "password", required = false) String password
+            , @RequestParam(value = "name", required = false) String name
+            , @RequestParam(value = "nickName", required = false) String nickName
+            , @RequestParam(value = "birthday", required = false) String birthday
+            , @RequestParam(value = "email", required = false) String email
+            , @RequestParam(value = "gender", required = false) String gender
+            , HttpSession session) {
 
         int userId = (Integer) session.getAttribute("userId");
 
@@ -120,4 +120,28 @@ public class UserRestController {
         return resultMap;
     }
 
+    // 비밀번호 수정 API
+    @PutMapping("/reset-password")
+    public Map<String, String> resetPassword(
+    		@RequestParam("loginId") String loginId,
+            @RequestParam("name") String name,
+            @RequestParam("birthday") String birthday,
+            @RequestParam("newPassword") String newPassword,
+            HttpSession session) {
+
+    	LocalDate parsedBirthday = LocalDate.parse(birthday);
+    	
+        User user = userService.resetPassword(loginId, name, parsedBirthday, newPassword);
+        
+        Map<String, String> resultMap = new HashMap<>();
+        
+        if (user != null) {
+            resultMap.put("result", "success");
+        } else {
+            resultMap.put("result", "fail");
+        }
+
+        return resultMap;
+    }
+    
 }

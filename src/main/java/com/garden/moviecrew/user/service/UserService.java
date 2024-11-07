@@ -132,5 +132,22 @@ public class UserService {
 		return user;
 	}
 	
+	// 비밀번호 재설정
+	public User resetPassword(String loginId, String name, LocalDate birthday, String newPassword) {
+        // 로그인 ID, 이름, 생년월일이 일치하는 사용자 조회
+        User user = userRepository.findByLoginIdAndNameAndBirthday(loginId, name, birthday).orElse(null);
+
+        if (user != null) {
+            // 비밀번호 업데이트
+        	String encryptPassword = encoder.encode(newPassword);
+            user.setPassword(encryptPassword);
+
+            // 사용자 정보 저장
+            return userRepository.save(user);
+        }
+        
+        return null;
+    }
+	
 	
 }

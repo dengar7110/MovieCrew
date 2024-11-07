@@ -11,32 +11,32 @@
         <div class="card mb-5 shadow-sm">
 		    <div class="card-body p-4">
 		        <!-- 모임 제목 -->
-		        <h2 class="text-center mb-4" th:text="${crew.title}">모임 제목</h2>
+		        <h1 class="text-center mb-4 font-weight-bold" th:text="${crew.title}">모임 제목</h1>
 		        
 		        <div class="text-center mb-4">
 		            <!-- 개설자 정보 및 생성 시기 -->
+		            <h6 class="text-secondary mb-1">
+		                <span th:text="|${session.userNickName} 님의 모임|">모임장 닉네임</span>
+		            </h6>
 		            <p class="h6 text-secondary mb-1">
-		                <span th:text="|${session.userNickName} 님의 모임|" class="font-weight-bold">모임장 닉네임</span>
-		            </p>
-		            <p class="h6 text-secondary mb-1">
-		                <span th:text="|개설일: ${#temporals.format(crew.createdAt, 'yyyy-MM-dd')}|" class="font-weight-bold">2024-01-01</span>
+		                <span th:text="|개설일 : ${#temporals.format(crew.createdAt, 'yyyy-MM-dd')}|">2024-01-01</span>
 		            </p>
 		        </div>
+		        	<h4 class="text-center mb-4" th:text="${crew.description}">모임 설명</h4>
 		
 		        <!-- 모임 설명 -->
-		        <h4 class="text-center mb-4" th:text="${crew.description}">모임 설명</h4>
 		
 		        <!-- 모임 정보 수정 및 삭제 버튼 -->
 		        <div class="text-center">
-		            <button type="button" class="btn btn-outline-secondary mr-2" data-toggle="modal" data-target="#editCrewModal">모임 정보 수정</button>
-		            <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteCrewModal">모임 삭제</button>
+		            <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#editCrewModal">모임 정보 수정</button>
+		            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCrewModal">모임 삭제</button>
 		        </div>
 		    </div>
 		</div>
 
         <!-- 승인된 사용자 목록 -->
         <div class="card mt-4">
-            <div class="card-header bg-success text-white">
+            <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">승인된 사용자</h5>
             </div>
             <ul class="list-group list-group-flush">
@@ -45,7 +45,8 @@
                         <span th:text="${member.nickname}">닉네임</span>
                         <small class="text-muted" th:text="${#temporals.format(member.updatedAt, 'yyyy-MM-dd HH:mm')}">가입 날짜</small>
                     </div>
-                    <button class="btn btn-danger btn-sm rejectUserBtn" th:if="${member.userId != crew.userId}" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">추방</button>
+                    <button class="btn btn-outline-danger btn-sm rejectUserBtn" th:if="${member.userId != crew.userId}" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">추방</button>
+                	<button class="btn btn-success btn-sm" th:unless="${member.userId != crew.userId}">모임장</button>
                 </li>
             </ul>
         </div>
@@ -53,7 +54,7 @@
         <!-- 대기 중인 사용자 목록 -->
         <div class="card mt-4">
             <div class="card-header bg-warning text-white">
-                <h5 class="mb-0">대기 중인 사용자</h5>
+                <h5 class="mb-0">대기중인 사용자</h5>
             </div>
             <ul class="list-group list-group-flush">
                 <li th:each="member:${pendingList}" class="list-group-item d-flex justify-content-between align-items-center">
@@ -62,11 +63,14 @@
                         <small class="text-muted" th:text="${#temporals.format(member.appliedAt, 'yyyy-MM-dd HH:mm')}">가입 요청 날짜</small>
                     </div>
                     <div>
-                        <button class="btn btn-success btn-sm approveUserBtn" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">승인</button>
-                        <button class="btn btn-danger btn-sm rejectUserBtn" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">거절</button>
+                        <button class="btn btn-outline-primary btn-sm approveUserBtn" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">승인</button>
+                        <button class="btn btn-outline-danger btn-sm rejectUserBtn" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">거절</button>
                     </div>
                 </li>
             </ul>
+            <div th:if="${#lists.isEmpty(pendingList)}" class="text-center text-muted py-3">
+        가입 대기중인 사용자가 없습니다.
+    </div>
         </div>
     </div>
     
@@ -93,7 +97,7 @@
 	                <div class="form-group">
 	                    <div class="d-flex">
 	                        <input type="file" id="fileInput" class="form-control-file d-none">
-	                        <button type="button" class="btn btn-outline-secondary" id="imageBtn">크루 대표 사진</button>
+	                        <button type="button" class="btn btn-outline-success" id="imageBtn">모임 대표 사진 수정하기</button>
 	                    </div>
 	                </div>
                 </div>
@@ -106,25 +110,25 @@
     </div>
     
     <!-- 모임 삭제 확인 모달 -->
-		<div class="modal fade" id="deleteCrewModal">
-		    <div class="modal-dialog">
-		        <div class="modal-content">
-		            <div class="modal-header">
-		                <h5 class="modal-title" id="deleteCrewModalLabel">모임 삭제</h5>
-		                <button type="button" class="close" data-dismiss="modal">
-		                    <span>&times;</span>
-		                </button>
-		            </div>
-		            <div class="modal-body">
-		                <p>정말로 이 모임을 삭제하시겠습니까?</p>
-		            </div>
-		            <div class="modal-footer">
-		                <button type="button" class="btn btn-danger" id="deleteCrewBtn" th:data-crew-id="${crew.Id}">삭제</button>
-		                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-		            </div>
-		        </div>
-		    </div>
-		</div>
+	<div class="modal fade" id="deleteCrewModal">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="deleteCrewModalLabel">모임 삭제</h5>
+	                <button type="button" class="close" data-dismiss="modal">
+	                    <span>&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body">
+	                <p>정말로 이 모임을 삭제하시겠습니까?</p>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-danger" id="deleteCrewBtn" th:data-crew-id="${crew.Id}">삭제</button>
+	                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
     
 </section>
 

@@ -12,6 +12,7 @@ import lombok.Getter;
 @Getter
 public class PostView {
     private int postId;
+    private int crewId;
     private int userId;
     private String title;
     private String contents;

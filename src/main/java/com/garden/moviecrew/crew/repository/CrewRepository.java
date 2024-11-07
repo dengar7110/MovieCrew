@@ -9,7 +9,7 @@ import com.garden.moviecrew.crew.domain.Crew;
 
 public interface CrewRepository extends JpaRepository<Crew, Integer> {
 
-    List<Crew> findAllByOrderByIdDesc(); // 모든 크루 목록
+    List<Crew> findAllByOrderByCreatedAtDesc(); // 모든 크루 목록
     
     Optional<Crew> findById(int id); // 특정 크루
     

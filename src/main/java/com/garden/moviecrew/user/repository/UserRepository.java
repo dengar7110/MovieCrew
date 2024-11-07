@@ -1,5 +1,6 @@
 package com.garden.moviecrew.user.repository;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +17,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 	
 	public int countByLoginId(String loginId);
 	
+	// loginId, name, birthday 로 사용자를 조회
+    public Optional<User> findByLoginIdAndNameAndBirthday(String loginId, String name, LocalDate birthday);
 	
 }
