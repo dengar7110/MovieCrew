@@ -1,0 +1,85 @@
+package com.garden.moviecrew.post;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.garden.moviecrew.comment.domain.Comment;
+import com.garden.moviecrew.comment.dto.CommentView;
+import com.garden.moviecrew.comment.service.CommentService;
+import com.garden.moviecrew.crew.domain.Crew;
+import com.garden.moviecrew.crew.service.CrewService;
+import com.garden.moviecrew.post.domain.Post;
+import com.garden.moviecrew.post.dto.PostView;
+import com.garden.moviecrew.post.service.PostService;
+
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+@RequestMapping("/post") // 
+public class PostController {
+
+    private PostService postService;
+    private CommentService commentService;
+    private CrewService crewService;
+
+    public PostController(
+    		PostService postService
+    		, CommentService commentService
+    		, CrewService crewService) {
+        this.postService = postService;
+        this.commentService = commentService;
+        this.crewService = crewService;
+    }
+
+    // 게시판 목록 조회
+    @GetMapping("/postlist/{crewId}")
+    public String postListView(
+    		@PathVariable("crewId") int crewId
+    		, HttpSession session
+    		, Model model) {
+        
+    	int userId = (Integer) session.getAttribute("userId"); // 세션에서 사용자 ID 가져오기
+
+        // 해당 크루에 속한 게시글 리스트 불러오기
+        List<PostView> postViewList = postService.getPostViewListByCrewIdOrderByCreatedAtDesc(crewId);
+        Crew crew = crewService.getCrewById(crewId);
+        
+        model.addAttribute("postViewList", postViewList);
+        model.addAttribute("crew", crew);
+
+        return "post/postListView"; // 게시판 화면으로 이동
+    }
+
+    // 게시글 상세보기 조회
+    @GetMapping("/postdetail/{crewId}/{postId}")
+    public String postDetailView(
+    		@PathVariable("crewId") int crewId
+    		, @PathVariable("postId") int postId
+    		, HttpSession session
+    		, Model model) {
+        
+    	int userId = (Integer)session.getAttribute("userId");
+    	
+    	// 게시글 정보 불러오기
+        PostView postView = postService.getPostView(postId, userId);
+
+        // 댓글 목록 불러오기
+        List<CommentView> commentViewList = commentService.getCommentListByPostIdOrderByCreatedAtDesc(postId);
+        
+        Crew crew = crewService.getCrewById(crewId);
+        
+        // 모델에 게시글과 댓글 추가
+        model.addAttribute("postView", postView);
+        model.addAttribute("commentViewList", commentViewList);
+        model.addAttribute("nowLoginUserId", userId);
+        model.addAttribute("crew", crew);
+
+        return "post/postDetailView"; // 게시글 상세 화면으로 이동
+    }
+}

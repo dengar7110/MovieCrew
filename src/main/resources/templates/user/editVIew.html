@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}">
+
+<section layout:fragment="contents">
+    <div class="container mt-5">
+        <div class="card p-5 shadow-lg">
+            <h2 class="text-center mb-4">개인정보 수정</h2>
+
+            <!-- 사용자 아이디 (수정 불가) -->
+            <div class="form-group">
+                <label for="loginId">아이디</label>
+                <input th:value="${user.loginId}" type="text" id="loginId" class="form-control" readonly>
+            </div>
+
+            <!-- 비밀번호 변경 -->
+            <div class="form-group">
+                <label for="password">비밀번호 변경</label>
+                <div class="input-group">
+	                <input type="password" id="passwordInput" placeholder="새 비밀번호를 입력해주세요" class="form-control">
+	                <div class="input-group-append">
+		            	<button type="button" class="btn btn-outline-secondary" id="togglePassword">보기</button>
+		            </div>
+		        </div>    
+            </div>
+
+            <!-- 이름 수정 -->
+            <div class="form-group">
+                <label for="name">이름</label>
+                <input th:value="${user.name}" type="text" id="nameInput" class="form-control">
+            </div>
+
+            <!-- 닉네임 수정 -->
+            <div class="form-group">
+                <label for="nickName">닉네임</label>
+                <input th:value="${user.nickName}" type="text" id="nickNameInput" name="nickName" class="form-control">
+            </div>
+
+			<!-- 생년월일 수정 -->
+			<div class="form-group">
+			    <label for="birthday">생년월일</label>
+			    <input th:value="${formattedBirthday}" type="date" id="birthdayInput" name="birthday" class="form-control">
+			</div>
+
+            <!-- 이메일 수정 -->
+            <div class="form-group">
+                <label for="email">이메일</label>
+                <input th:value="${user.email}" type="email" id="emailInput" class="form-control">
+            </div>
+
+            <!-- 성별 수정 -->
+            <div class="form-group">
+                <label>성별</label>
+                <div class="d-flex">
+                    <div class="form-check form-check-inline mr-3">
+                        <input class="form-check-input" type="radio" name="gender" value="male" th:checked="${user.gender == 'male'}" disabled>
+                        <label class="form-check-label" for="male">남성</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="gender" value="female" th:checked="${user.gender == 'female'}" disabled>
+                        <label class="form-check-label" for="female">여성</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 저장 버튼 -->
+            <button type="button" class="btn btn-primary btn-block btn-lg mt-4" id="saveBtn">저장하기</button>
+        </div>
+    </div>
+</section>
+	
+<script layout:fragment="script">
+
+	$(document).ready(function() {
+		
+		$("#saveBtn").on("click", function() {
+			
+			let password = $("#passwordInput").val();
+			let name = $("#nameInput").val();
+			let nickName = $("#nickNameInput").val();
+			let birthday = $("#birthdayInput").val();
+			let email = $("#emailInput").val();
+			let gender = $("input[name='gender']:checked").val();
+			
+			$.ajax({
+				type: "put"
+				, url: "/user/edit"
+				, data: {"password":password, "name":name, "nickName":nickName, "birthday":birthday, "email":email, "gender":gender}
+				, success:function(data){
+					if(data.result == "success") {
+						location.href = "/user/edit-view";
+					} else {
+						alert("개인정보 수정 실패!");
+					}
+				}
+				, error:function() {
+					alert("개인정보 수정 에러!");
+				}
+			});
+			
+		});
+		
+		
+		// 비밀번호 토글 버튼 보기, 숨기기
+	    $("#togglePassword").on("click", function() {
+	        let password = $("#passwordInput");
+	        let type = password.attr("type");
+
+	        if(type == "password") {
+	        	password.attr("type", "text");
+	        	$(this).text("숨기기");
+	        } else {
+	        	password.attr("type", "password");
+	        	$(this).text("보기");
+	        }
+	        
+	    });
+		
+		
+	});
+
+</script>
+	
+</html>

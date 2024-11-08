@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+
+<section layout:fragment="contents">
+    <div class="container mt-5">
+        
+         <!-- 모임 정보 카드 -->
+        <div class="card mb-5 shadow-sm">
+		    <div class="card-body p-4">
+		        <!-- 모임 제목 -->
+		        <h1 class="text-center mb-4 font-weight-bold" th:text="${crew.title}">모임 제목</h1>
+		        
+		        <div class="text-center mb-4">
+		            <!-- 개설자 정보 및 생성 시기 -->
+		            <h6 class="text-secondary mb-1">
+		                <span th:text="|${session.userNickName} 님의 모임|">모임장 닉네임</span>
+		            </h6>
+		            <p class="h6 text-secondary mb-1">
+		                <span th:text="|개설일 : ${#temporals.format(crew.createdAt, 'yyyy-MM-dd')}|">2024-01-01</span>
+		            </p>
+		        </div>
+		        	<h4 class="text-center mb-4" th:text="${crew.description}">모임 설명</h4>
+		
+		        <!-- 모임 설명 -->
+		
+		        <!-- 모임 정보 수정 및 삭제 버튼 -->
+		        <div class="text-center">
+		            <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#editCrewModal">모임 정보 수정</button>
+		            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCrewModal">모임 삭제</button>
+		        </div>
+		    </div>
+		</div>
+
+        <!-- 승인된 사용자 목록 -->
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">승인된 사용자</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li th:each="member:${approvedList}" class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex flex-column">
+                        <span th:text="${member.nickname}">닉네임</span>
+                        <small class="text-muted" th:text="${#temporals.format(member.updatedAt, 'yyyy-MM-dd HH:mm')}">가입 날짜</small>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm rejectUserBtn" th:if="${member.userId != crew.userId}" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">추방</button>
+                	<button class="btn btn-success btn-sm" th:unless="${member.userId != crew.userId}">모임장</button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 대기 중인 사용자 목록 -->
+        <div class="card mt-4">
+            <div class="card-header bg-warning text-white">
+                <h5 class="mb-0">대기중인 사용자</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li th:each="member:${pendingList}" class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex flex-column">
+                        <span th:text="${member.nickname}">닉네임</span>
+                        <small class="text-muted" th:text="${#temporals.format(member.appliedAt, 'yyyy-MM-dd HH:mm')}">가입 요청 날짜</small>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-primary btn-sm approveUserBtn" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">승인</button>
+                        <button class="btn btn-outline-danger btn-sm rejectUserBtn" th:data-crew-id="${member.crewId}" th:data-user-id="${member.userId}">거절</button>
+                    </div>
+                </li>
+            </ul>
+            <div th:if="${#lists.isEmpty(pendingList)}" class="text-center text-muted py-3">
+        가입 대기중인 사용자가 없습니다.
+    </div>
+        </div>
+    </div>
+    
+    <!-- 모임 정보 수정 모달 -->
+    <div class="modal fade" id="editCrewModal" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCrewModalLabel">모임 정보 수정</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+	                <input type="hidden" id="crewId" th:value="${crew.title}">
+	                <div class="form-group">
+	                    <label for="editTitle">모임 제목</label>
+	                    <input type="text" class="form-control" id="editTitleInput" th:value="${crew.title}" placeholder="제목을 입력하세요">
+	                </div>
+	                <div class="form-group">
+	                    <label for="editDescription">모임 설명</label>
+	                    <textarea class="form-control" id="editDescriptionInput" rows="4" th:text="${crew.description}" placeholder="설명을 입력하세요"></textarea>
+	                </div>
+	                <div class="form-group">
+	                    <div class="d-flex">
+	                        <input type="file" id="fileInput" class="form-control-file d-none">
+	                        <button type="button" class="btn btn-outline-success" id="imageBtn">모임 대표 사진 수정하기</button>
+	                    </div>
+	                </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="editCrewBtn" th:data-crew-id="${crew.Id}">수정하기</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 모임 삭제 확인 모달 -->
+	<div class="modal fade" id="deleteCrewModal">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="deleteCrewModalLabel">모임 삭제</h5>
+	                <button type="button" class="close" data-dismiss="modal">
+	                    <span>&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body">
+	                <p>정말로 이 모임을 삭제하시겠습니까?</p>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-danger" id="deleteCrewBtn" th:data-crew-id="${crew.Id}">삭제</button>
+	                <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    
+</section>
+
+<script layout:fragment="script">
+
+	$(document).ready(function() {
+		
+		$("#imageBtn").on("click", function() {
+    		$("#fileInput").click();
+    	});
+		
+		$("#deleteCrewBtn").on("click", function() {
+			
+			let crewId = $(this).data("crew-id");
+			
+			$.ajax({
+				type: "delete"
+				, url: "/crew/deleteCrew"
+				, data: {"crewId":crewId}
+				, success: function(data) {
+					if(data.result == "success") {
+						location.href = "/crew/crew-view";
+					} else {
+						alert("크루 삭제 실패!");
+					}
+					
+				}
+				, error: function() {
+					alert("크루 삭제 에러!");
+				}
+				
+			});
+			
+			
+		});
+		
+		$("#editCrewBtn").on("click", function() {
+			
+			let crewId = $(this).data("crew-id");
+			let title = $("#editTitleInput").val();
+			let description = $("#editDescriptionInput").val();
+            let file = $("#fileInput")[0].files[0];
+            
+            if (!title || !description) {
+                alert("모임제목과 모임설명을 입력해주세요.");
+                return;
+            }
+            
+            let formData = new FormData();
+            formData.append("crewId", crewId);
+            formData.append("title", title);
+            formData.append("description", description);
+            formData.append("imageFile", file);
+            
+			$.ajax({
+				type: "put"
+				, url: "/crew/editCrew"
+				, data: formData
+                , enctype: "multipart/form-data"
+                , processData: false
+                , contentType: false
+				, success: function(data) {
+					if(data.result == "success") {
+						location.reload();				
+					} else {
+						alert("모임 정보 수정 실패!");
+					}
+				}
+				, error: function() {
+					alert("모임 정보 수정 에러!");
+				}
+			});
+			
+		});
+		
+		
+		
+		$(".approveUserBtn").on("click", function() {
+			
+			let userId = $(this).data("user-id");
+			let crewId = $(this).data("crew-id");
+			
+			$.ajax({
+				type: "put"
+				, url: "/membership/approve/" + crewId + "/" + userId
+				, data: {"userId":userId, "crewId":crewId}
+				, success: function(data) {
+					if(data.result == "success") {
+						location.reload();
+					} else {
+						alert("가입 승인 실패!");
+					}
+				}
+				, error: function() {
+					alert("가입 승인 에러!");
+				}
+			});
+		});
+		
+		$(".rejectUserBtn").on("click", function() {
+			
+			let userId = $(this).data("user-id");
+			let crewId = $(this).data("crew-id");
+			
+			$.ajax({
+				type: "put"
+				, url: "/membership/reject/" + crewId + "/" + userId
+				, data: {"userId":userId, "crewId":crewId}
+				, success: function(data) {
+					if(data.result == "success") {
+						location.reload();
+					} else {
+						alert("가입 거절 실패!");
+					}
+				}
+				, error: function() {
+					alert("가입 거절 에러!");
+				}
+			});
+		});
+		
+	});
+
+</script>
+
+</html>

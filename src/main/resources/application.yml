@@ -1,6 +1,10 @@
 spring:
   config:
+<<<<<<< HEAD
     import: security.yml
+=======
+    import: security-variable.yml
+>>>>>>> develop
   application:
     name: MovieCrew
   datasource:
@@ -17,4 +21,12 @@ spring:
       ddl-auto: none
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+<<<<<<< HEAD
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+=======
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  movie:
+    api:
+      url: https://api.themoviedb.org/3
+      key: 00d39ce433d4e05bacd8d3b68be6ef40
+>>>>>>> develop
